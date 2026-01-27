@@ -1,0 +1,575 @@
+import { toCssRules } from '../convert/toCssRules.js';
+import { toHash } from '../convert/toHash.js';
+import { toTailDashed } from '../convert/toTailDashed.js';
+import type { RuleGroupName, Sheet } from '../sheet.js';
+import { createRulesInjectionDeferrer } from '../sheet.js';
+import type { CSSObject, StitchesConfig } from '../types/css.js';
+import { createMemo } from '../utility/createMemo.js';
+import { define } from '../utility/define.js';
+import { hasNames } from '../utility/hasNames.js';
+import { hasOwn } from '../utility/hasOwn.js';
+import { internal } from '../utility/internal.js';
+
+const createCssFunctionMap = createMemo<CssFn, []>();
+
+/** Fallback props object used when no props are passed. */
+const empty: Record<string, unknown> = {};
+
+/**
+ * Variant match condition.
+ */
+type VariantMatch = Record<string, string>;
+
+/**
+ * Single variant definition: [match, style, isEmpty]
+ */
+type VariantDef = [VariantMatch, CSSObject, boolean];
+
+/**
+ * Composer array structure:
+ * [className, baseStyle, singularVariants, compoundVariants, prefilledVariants, undefinedVariants]
+ */
+type Composer = [
+  string,
+  CSSObject,
+  VariantDef[],
+  VariantDef[],
+  Record<string, string>,
+  string[],
+];
+
+/**
+ * Internal data stored on styled components.
+ */
+interface InternalsData {
+  type: unknown;
+  composers: Set<Composer>;
+}
+
+/**
+ * Props passed to the render function.
+ */
+export interface RenderProps {
+  className?: string;
+  css?: CSSObject;
+  [key: string]: unknown;
+}
+
+/**
+ * Result of rendering a styled component.
+ */
+export interface RenderResult {
+  type: unknown;
+  className: string;
+  selector: string;
+  props: Record<string, unknown>;
+  toString(): string;
+  deferredInjector: (() => null) | null;
+}
+
+/**
+ * CSS component returned by the css function.
+ */
+export interface CssComponent {
+  (props?: RenderProps): RenderResult;
+  className: string;
+  selector: string;
+  [internal]: InternalsData;
+  toString(): string;
+}
+
+/**
+ * Component configuration options.
+ */
+export interface ComponentConfig {
+  componentId?: string;
+  displayName?: string;
+  shouldForwardStitchesProp?: (prop: string) => boolean;
+}
+
+/**
+ * Style configuration with variants.
+ * Note: This type doesn't extend CSSObject directly to avoid index signature conflicts.
+ * The actual style properties are passed through the spread.
+ */
+export type StyleConfig = CSSObject & {
+  variants?: Record<string, Record<string, CSSObject>>;
+  compoundVariants?: Array<{ css?: CSSObject; [key: string]: unknown }>;
+  defaultVariants?: Record<string, string | number | boolean>;
+};
+
+/**
+ * CSS function signature.
+ */
+export interface CssFn {
+  (...args: Array<string | CssComponent | StyleConfig | null | undefined>): CssComponent;
+  withConfig(
+    config: ComponentConfig,
+  ): (
+    ...args: Array<string | CssComponent | StyleConfig | null | undefined>
+  ) => CssComponent;
+}
+
+/**
+ * Creates a composer from a configuration object.
+ */
+const createComposer = (
+  {
+    variants: initSingularVariants,
+    compoundVariants: initCompoundVariants,
+    defaultVariants: initDefaultVariants,
+    ...style
+  }: StyleConfig,
+  config: StitchesConfig,
+  { componentId, displayName }: ComponentConfig,
+): Composer => {
+  const hash = componentId || toHash(style);
+  const componentNamePrefix = displayName ? 'c-' + displayName : 'c';
+  const className = `${toTailDashed(config.prefix)}${componentNamePrefix}-${hash}`;
+
+  const singularVariants: VariantDef[] = [];
+  const compoundVariants: VariantDef[] = [];
+  const prefilledVariants: Record<string, string> = Object.create(null);
+  const undefinedVariants: string[] = [];
+
+  // Set default variants
+  for (const variantName in initDefaultVariants) {
+    prefilledVariants[variantName] = String(initDefaultVariants[variantName]);
+  }
+
+  // Add singular variants
+  if (typeof initSingularVariants === 'object' && initSingularVariants) {
+    for (const name in initSingularVariants) {
+      if (!hasOwn(prefilledVariants, name)) {
+        prefilledVariants[name] = 'undefined';
+      }
+
+      const variantPairs = initSingularVariants[name]!;
+
+      for (const pair in variantPairs) {
+        const vMatch: VariantMatch = { [name]: String(pair) };
+
+        if (String(pair) === 'undefined') {
+          undefinedVariants.push(name);
+        }
+
+        const vStyle = variantPairs[pair]!;
+        const variant: VariantDef = [vMatch, vStyle, !hasNames(vStyle)];
+
+        singularVariants.push(variant);
+      }
+    }
+  }
+
+  // Add compound variants
+  if (typeof initCompoundVariants === 'object' && initCompoundVariants) {
+    for (const compoundVariant of initCompoundVariants) {
+      let { css: vStyle, ...vMatch } = compoundVariant;
+
+      vStyle = typeof vStyle === 'object' && vStyle ? vStyle : {};
+
+      // Serialize all compound variant pairs
+      for (const name in vMatch) {
+        (vMatch as VariantMatch)[name] = String(vMatch[name]);
+      }
+
+      const variant: VariantDef = [vMatch as VariantMatch, vStyle, !hasNames(vStyle)];
+      compoundVariants.push(variant);
+    }
+  }
+
+  return [
+    className,
+    style,
+    singularVariants,
+    compoundVariants,
+    prefilledVariants,
+    undefinedVariants,
+  ];
+};
+
+/**
+ * Returns useful data that can be known before rendering.
+ */
+const getPreparedDataFromComposers = (
+  composers: Set<Composer>,
+): [string, string[], Record<string, string>, Set<string>] => {
+  let baseClassName = '';
+  const baseClassNames: string[] = [];
+  const combinedPrefilledVariants: Record<string, string> = {};
+  const combinedUndefinedVariants: string[] = [];
+
+  for (const [
+    className,
+    ,
+    ,
+    ,
+    prefilledVariants,
+    undefinedVariants,
+  ] of composers) {
+    if (baseClassName === '') baseClassName = className;
+
+    baseClassNames.push(className);
+    combinedUndefinedVariants.push(...undefinedVariants);
+
+    for (const name in prefilledVariants) {
+      const data = prefilledVariants[name]!;
+      if (
+        combinedPrefilledVariants[name] === undefined ||
+        data !== 'undefined' ||
+        undefinedVariants.includes(data)
+      ) {
+        combinedPrefilledVariants[name] = data;
+      }
+    }
+  }
+
+  return [
+    baseClassName,
+    baseClassNames,
+    combinedPrefilledVariants,
+    new Set(combinedUndefinedVariants),
+  ];
+};
+
+/**
+ * Gets target variants to add based on props.
+ */
+const getTargetVariantsToAdd = (
+  targetVariants: VariantDef[],
+  variantProps: Record<string, unknown>,
+  media: Record<string, string>,
+  isCompoundVariant?: boolean,
+): Array<Array<[string, CSSObject, boolean]> | undefined> => {
+  const targetVariantsToAdd: Array<Array<[string, CSSObject, boolean]> | undefined> = [];
+
+  targetVariants: for (let [vMatch, vStyle, vEmpty] of targetVariants) {
+    // Skip empty variants
+    if (vEmpty) continue;
+
+    let vOrder = 0;
+    let vName = '';
+    let isResponsive = false;
+
+    for (vName in vMatch) {
+      const vPair = vMatch[vName]!;
+      const pPair = variantProps[vName];
+
+      // Exact matches
+      if (pPair === vPair) continue;
+
+      // Responsive matches
+      if (typeof pPair === 'object' && pPair) {
+        let didMatch = false;
+        let qOrder = 0;
+        let matchedQueries: string[] | undefined;
+
+        for (const query in pPair as Record<string, unknown>) {
+          if (vPair === String((pPair as Record<string, unknown>)[query])) {
+            if (query !== '@initial') {
+              const cleanQuery = query.slice(1);
+              (matchedQueries = matchedQueries || []).push(
+                cleanQuery in media
+                  ? media[cleanQuery]!
+                  : query.replace(/^@media ?/, ''),
+              );
+              isResponsive = true;
+            }
+
+            vOrder += qOrder;
+            didMatch = true;
+          }
+
+          ++qOrder;
+        }
+
+        if (matchedQueries && matchedQueries.length) {
+          vStyle = {
+            ['@media ' + matchedQueries.join(', ')]: vStyle,
+          };
+        }
+
+        if (!didMatch) continue targetVariants;
+      } else {
+        // Non-matches
+        continue targetVariants;
+      }
+    }
+
+    const variantKey = isCompoundVariant ? 'cv' : `${vName}-${vMatch[vName]}`;
+    (targetVariantsToAdd[vOrder] = targetVariantsToAdd[vOrder] || []).push([
+      variantKey,
+      vStyle,
+      isResponsive,
+    ]);
+  }
+
+  return targetVariantsToAdd;
+};
+
+/**
+ * Creates the renderer for a styled component.
+ */
+const createRenderer = (
+  config: StitchesConfig,
+  internals: InternalsData,
+  sheet: Sheet,
+  componentConfig: ComponentConfig,
+): CssComponent => {
+  const { shouldForwardStitchesProp } = componentConfig;
+
+  const [baseClassName, baseClassNames, prefilledVariants, undefinedVariants] =
+    getPreparedDataFromComposers(internals.composers);
+
+  const isReactComponent =
+    typeof internals.type === 'function' ||
+    !!(internals.type as { $$typeof?: unknown })?.$$typeof;
+
+  const deferredInjector = isReactComponent
+    ? createRulesInjectionDeferrer(sheet)
+    : null;
+
+  const injectionTarget = (deferredInjector || sheet).rules;
+
+  const selector = `.${baseClassName}${
+    baseClassNames.length > 1
+      ? `:where(.${baseClassNames.slice(1).join('.')})`
+      : ''
+  }`;
+
+  const render = (props?: RenderProps): RenderResult => {
+    props = typeof props === 'object' && props ? props : empty;
+
+    const forwardProps: Record<string, unknown> = { ...props };
+    const variantProps: Record<string, unknown> = {};
+
+    for (const name in prefilledVariants) {
+      if (name in props) {
+        if (!shouldForwardStitchesProp?.(name)) {
+          delete forwardProps[name];
+        }
+
+        let data = props[name];
+
+        if (typeof data === 'object' && data) {
+          variantProps[name] = {
+            '@initial': prefilledVariants[name],
+            ...(data as object),
+          };
+        } else {
+          data = String(data);
+
+          variantProps[name] =
+            data === 'undefined' && !undefinedVariants.has(name)
+              ? prefilledVariants[name]
+              : data;
+        }
+      } else {
+        variantProps[name] = prefilledVariants[name];
+      }
+    }
+
+    const classSet = new Set([...baseClassNames]);
+
+    for (const [
+      composerBaseClass,
+      composerBaseStyle,
+      singularVariants,
+      compoundVariants,
+    ] of internals.composers) {
+      if (!sheet.rules.styled.cache.has(composerBaseClass)) {
+        sheet.rules.styled.cache.add(composerBaseClass);
+
+        toCssRules(
+          composerBaseStyle,
+          [`.${composerBaseClass}`],
+          [],
+          config,
+          (cssText) => {
+            injectionTarget.styled.apply(cssText);
+          },
+        );
+      }
+
+      const singularVariantsToAdd = getTargetVariantsToAdd(
+        singularVariants,
+        variantProps,
+        config.media,
+      );
+      const compoundVariantsToAdd = getTargetVariantsToAdd(
+        compoundVariants,
+        variantProps,
+        config.media,
+        true,
+      );
+
+      for (const variantToAdd of singularVariantsToAdd) {
+        if (variantToAdd === undefined) continue;
+
+        for (const [vClass, vStyle, isResponsive] of variantToAdd) {
+          const variantClassName = `${composerBaseClass}-${toHash(vStyle)}-${vClass}`;
+
+          classSet.add(variantClassName);
+
+          const groupName: RuleGroupName = isResponsive ? 'resonevar' : 'onevar';
+          const groupCache = sheet.rules[groupName].cache;
+          const targetInjectionGroup = injectionTarget[groupName];
+
+          if (!groupCache.has(variantClassName)) {
+            groupCache.add(variantClassName);
+            toCssRules(vStyle, [`.${variantClassName}`], [], config, (cssText) => {
+              targetInjectionGroup.apply(cssText);
+            });
+          }
+        }
+      }
+
+      for (const variantToAdd of compoundVariantsToAdd) {
+        if (variantToAdd === undefined) continue;
+
+        for (const [vClass, vStyle] of variantToAdd) {
+          const variantClassName = `${composerBaseClass}-${toHash(vStyle)}-${vClass}`;
+
+          classSet.add(variantClassName);
+
+          if (!sheet.rules.allvar.cache.has(variantClassName)) {
+            sheet.rules.allvar.cache.add(variantClassName);
+
+            toCssRules(vStyle, [`.${variantClassName}`], [], config, (cssText) => {
+              injectionTarget.allvar.apply(cssText);
+            });
+          }
+        }
+      }
+    }
+
+    // Apply css prop styles
+    const css = forwardProps['css'] as CSSObject | undefined;
+    if (typeof css === 'object' && css) {
+      if (!shouldForwardStitchesProp?.('css')) {
+        delete forwardProps['css'];
+      }
+
+      const iClass = `${baseClassName}-i${toHash(css)}-css`;
+
+      classSet.add(iClass);
+
+      if (!sheet.rules.inline.cache.has(iClass)) {
+        sheet.rules.inline.cache.add(iClass);
+
+        toCssRules(css, [`.${iClass}`], [], config, (cssText) => {
+          injectionTarget.inline.apply(cssText);
+        });
+      }
+    }
+
+    // Add external className
+    for (const propClassName of String(props.className || '')
+      .trim()
+      .split(/\s+/)) {
+      if (propClassName) classSet.add(propClassName);
+    }
+
+    const renderedClassName = (forwardProps['className'] = [...classSet].join(' '));
+
+    const renderedToString = () => renderedClassName;
+
+    return {
+      type: internals.type,
+      className: renderedClassName,
+      selector,
+      props: forwardProps,
+      toString: renderedToString,
+      deferredInjector,
+    };
+  };
+
+  const toString = (): string => {
+    if (!sheet.rules.styled.cache.has(baseClassName)) {
+      render();
+    }
+    return baseClassName;
+  };
+
+  return define(render, {
+    className: baseClassName,
+    selector,
+    [internal]: internals,
+    toString,
+  }) as CssComponent;
+};
+
+/**
+ * Creates the css function.
+ * Returns a function that applies component styles.
+ */
+export const createCssFunction = (config: StitchesConfig, sheet: Sheet): CssFn =>
+  createCssFunctionMap(config, () => {
+    const _css = (
+      args: Array<string | CssComponent | StyleConfig | null | undefined>,
+      componentConfig: ComponentConfig = {},
+    ): CssComponent => {
+      const internals: InternalsData = {
+        type: null,
+        composers: new Set(),
+      };
+
+      for (const arg of args) {
+        // Skip any void argument
+        if (arg == null) continue;
+
+        // Conditionally extend the component
+        if (
+          typeof arg === 'object' &&
+          internal in arg &&
+          (arg as unknown as { [internal]: InternalsData })[internal]
+        ) {
+          const argInternal = (arg as unknown as { [internal]: InternalsData })[
+            internal
+          ];
+
+          if (internals.type == null) {
+            internals.type = argInternal.type;
+          }
+
+          for (const composer of argInternal.composers) {
+            internals.composers.add(composer);
+          }
+        }
+        // Otherwise, conditionally define the component type
+        else if (
+          typeof arg !== 'object' ||
+          (arg as { $$typeof?: unknown }).$$typeof
+        ) {
+          if (internals.type == null) {
+            internals.type = arg;
+          }
+        }
+        // Otherwise, add a new composer to this component
+        else {
+          internals.composers.add(
+            createComposer(arg as StyleConfig, config, componentConfig),
+          );
+        }
+      }
+
+      // Set the component type if none was set
+      if (internals.type == null) internals.type = 'span';
+      if (!internals.composers.size) {
+        internals.composers.add(['PJLV', {}, [], [], {}, []]);
+      }
+
+      return createRenderer(config, internals, sheet, componentConfig);
+    };
+
+    const css = (
+      ...args: Array<string | CssComponent | StyleConfig | null | undefined>
+    ) => _css(args);
+
+    css.withConfig =
+      (componentConfig: ComponentConfig) =>
+      (...args: Array<string | CssComponent | StyleConfig | null | undefined>) =>
+        _css(args, componentConfig);
+
+    return css;
+  });

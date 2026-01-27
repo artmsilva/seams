@@ -1,0 +1,3 @@
+[submodule "vendor/stitches"]
+	path = vendor/stitches
+	url = https://github.com/stitchesjs/stitches.git
