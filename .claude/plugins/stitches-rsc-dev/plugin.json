@@ -1,0 +1,6 @@
+{
+  "name": "stitches-rsc-dev",
+  "version": "0.1.0",
+  "description": "Development tools for Stitches RSC - migration, debugging, and theme creation",
+  "skills": ["skills/*"]
+}
