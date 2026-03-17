@@ -34,7 +34,7 @@
   "devDependencies": {
     "tsup": "^8.0.0",
     "typescript": "^5.4.0",
-    "vite": "^5.0.0"
+    "vite": "^8.0.0"
   },
   "sideEffects": false,
   "license": "MIT",
