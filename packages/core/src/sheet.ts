@@ -64,11 +64,17 @@ let layerOrderInjected = false;
  */
 const injectLayerOrder = (): void => {
   if (!isBrowser || layerOrderInjected) return;
+  // Skip if React 19 already hoisted the layer order
+  if (document.querySelector('style[data-href="seams-layer-order"]')) {
+    layerOrderInjected = true;
+    return;
+  }
   layerOrderInjected = true;
 
   const el = document.createElement("style");
   el.id = "seams-layers";
   el.setAttribute("data-seams", "layers");
+  el.setAttribute("data-seams-source", "runtime");
   const layerNames = ruleGroupNames.map((n) => `${LAYER_PREFIX}.${n}`).join(", ");
   el.textContent = `@layer ${layerNames};`;
   const firstStyle = document.head.querySelector("style");
@@ -80,12 +86,28 @@ const injectLayerOrder = (): void => {
 };
 
 /**
+ * Mapping from rule group names to their React 19 hoisted style href values.
+ * Used to detect if a group's CSS is already handled by React 19 style hoisting.
+ */
+const REACT_HOISTED_HREFS: Partial<Record<RuleGroupName, string>> = {
+  themed: "seams-themed",
+  global: "seams-global",
+};
+
+/**
  * Gets or creates the <style> element for a given rule group.
- * Each group gets its own <style> tag with a data attribute for identification.
- * Runtime injection is needed for client components that hydrate after SSG.
+ * Returns null if the group's CSS is already handled by React 19 style hoisting
+ * (i.e., a <style data-href="seams-themed"> already exists in <head>).
+ * For groups without React hoisting (styled, onevar, etc.), creates runtime tags.
  */
 const getStyleElement = (name: RuleGroupName): HTMLStyleElement | null => {
   if (!isBrowser) return null;
+
+  // Skip runtime injection for groups already handled by React 19 hoisting
+  const hoistedHref = REACT_HOISTED_HREFS[name];
+  if (hoistedHref && document.querySelector(`style[data-href="${hoistedHref}"]`)) {
+    return null;
+  }
 
   // Ensure layer order is declared first
   injectLayerOrder();
@@ -95,6 +117,7 @@ const getStyleElement = (name: RuleGroupName): HTMLStyleElement | null => {
   if (!el) {
     el = document.createElement("style");
     el.setAttribute("data-seams", name);
+    el.setAttribute("data-seams-source", "runtime");
     el.id = id;
     document.head.appendChild(el);
   }
