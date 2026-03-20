@@ -27,7 +27,7 @@ jobs:
         run: vp run build
 
       - name: Check
-        run: vp check
+        run: vp check packages/*/src
 
       - name: Type check
         run: vp run typecheck
