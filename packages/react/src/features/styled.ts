@@ -1,6 +1,6 @@
 import React from "react";
 
-import { createCssFunction, createMemo, internal, ruleGroupNames } from "@artmsilva/seams-core";
+import { createCssFunction, createMemo, internal } from "@artmsilva/seams-core";
 import type {
   ComponentConfig,
   CssComponent,
@@ -77,24 +77,7 @@ export interface StyledFn {
   ) => StyledComponent<T>;
 }
 
-/**
- * Collects all current CSS from the sheet, wrapped in @layer blocks.
- * Used to co-render <style> tags alongside components for RSC support.
- *
- * SECURITY: This CSS is generated deterministically from the library's
- * own theme config and style objects — not from user-supplied content.
- * It is safe to embed in <style> tags.
- */
-const collectSheetCss = (sheet: Sheet): string => {
-  const parts: string[] = [];
-  for (const name of ruleGroupNames) {
-    const group = sheet.rules[name];
-    if (group && group.rules.length > 0) {
-      parts.push(`@layer seams.${name}{${group.rules.join("")}}`);
-    }
-  }
-  return parts.join("");
-};
+// CSS is now collected per-component via RenderResult.cssText from the core css() function.
 
 /**
  * Creates the styled function for React components.
@@ -128,7 +111,7 @@ export const createStyledFunction = ({ config, sheet }: StyledConfig): StyledFn 
         const Type =
           props?.["as"] && !shouldForwardAs ? (props["as"] as React.ElementType) : DefaultType;
 
-        const { props: forwardProps, deferredInjector } = cssComponent(props);
+        const { props: forwardProps, deferredInjector, cssText } = cssComponent(props);
 
         if (!shouldForwardAs) {
           delete forwardProps["as"];
@@ -136,35 +119,59 @@ export const createStyledFunction = ({ config, sheet }: StyledConfig): StyledFn 
 
         forwardProps["ref"] = ref;
 
-        // Collect CSS for co-rendering via React 19 <style href precedence>.
-        // CSS is deterministic output from the library's own style objects
-        // and theme config — not user-supplied content.
-        const cssText = collectSheetCss(sheet);
-        const layerOrderCss = sheet.getLayerOrder();
-
         const element = React.createElement(Type as React.ElementType, forwardProps);
 
         // React 19 <style href precedence>: hoists to <head>, deduplicates
         // by href, blocks rendering until processed. Works in RSC without JS.
+        //
+        // Strategy: use STABLE hrefs for theme/global CSS so React deduplicates
+        // them to a single copy regardless of how many components emit them.
+        // Use per-component hrefs for component-specific CSS.
         const children: React.ReactNode[] = [];
 
-        // Layer order declaration — ensures cascade ordering
+        // 1. Layer order declaration (deduplicated — same href from every component)
         children.push(
           React.createElement("style", {
             key: "seams-order",
             href: "seams-layer-order",
-            precedence: "seams-order",
-            children: layerOrderCss,
+            precedence: "seams-00-order",
+            children: sheet.getLayerOrder(),
           }),
         );
 
-        // Component styles wrapped in @layer
+        // 2. Theme CSS variables (deduplicated — stable href across all components)
+        const themedRules = sheet.rules.themed.rules;
+        if (themedRules.length > 0) {
+          children.push(
+            React.createElement("style", {
+              key: "seams-themed",
+              href: "seams-themed",
+              precedence: "seams-01-themed",
+              children: `@layer seams.themed{${themedRules.join("")}}`,
+            }),
+          );
+        }
+
+        // 3. Global styles (deduplicated — stable href across all components)
+        const globalRules = sheet.rules.global.rules;
+        if (globalRules.length > 0) {
+          children.push(
+            React.createElement("style", {
+              key: "seams-global",
+              href: "seams-global",
+              precedence: "seams-02-global",
+              children: `@layer seams.global{${globalRules.join("")}}`,
+            }),
+          );
+        }
+
+        // 4. This component's own CSS (unique href per component)
         if (cssText) {
           children.push(
             React.createElement("style", {
               key: `seams-${cssComponent.className}`,
               href: `seams-${cssComponent.className}`,
-              precedence: "seams",
+              precedence: "seams-03-styled",
               children: cssText,
             }),
           );

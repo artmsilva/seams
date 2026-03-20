@@ -32,6 +32,9 @@ export interface RuleGroup {
   apply: (cssText: string) => void;
 }
 
+/** A snapshot of rule counts per group, used for incremental CSS collection. */
+export type SheetSnapshot = Record<RuleGroupName, number>;
+
 /**
  * Sheet interface for collecting CSS rules.
  */
@@ -43,6 +46,10 @@ export interface Sheet {
   getLayerOrder: () => string;
   /** Get all CSS wrapped in @layer blocks, suitable for embedding in HTML. */
   getLayeredCss: () => string;
+  /** Take a snapshot of current rule counts (for incremental CSS collection). */
+  snapshot: () => SheetSnapshot;
+  /** Get only CSS added since a snapshot, wrapped in @layer blocks. */
+  getCssSince: (snap: SheetSnapshot) => string;
 }
 
 /** Whether we're in a browser environment with DOM access. */
@@ -164,6 +171,27 @@ export const createSheet = (): Sheet => {
     return parts.join("");
   };
 
+  const snapshot = (): SheetSnapshot => {
+    const snap = {} as SheetSnapshot;
+    for (const name of ruleGroupNames) {
+      snap[name] = rules[name].rules.length;
+    }
+    return snap;
+  };
+
+  const getCssSince = (snap: SheetSnapshot): string => {
+    const parts: string[] = [];
+    for (const name of ruleGroupNames) {
+      const group = rules[name];
+      const startIndex = snap[name] || 0;
+      if (group && group.rules.length > startIndex) {
+        const newRules = group.rules.slice(startIndex);
+        parts.push(`@layer ${LAYER_PREFIX}.${name}{${newRules.join("")}}`);
+      }
+    }
+    return parts.join("");
+  };
+
   reset();
 
   return {
@@ -172,6 +200,8 @@ export const createSheet = (): Sheet => {
     toString,
     getLayerOrder,
     getLayeredCss,
+    snapshot,
+    getCssSince,
   };
 };
 
