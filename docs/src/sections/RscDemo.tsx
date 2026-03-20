@@ -1,84 +1,6 @@
-import { styled, getCssText } from "../seams.config";
+import { getCssText } from "../seams.config";
+import { Badge, Card, Row, Text, Stack } from "../ds";
 import { Section, SubHeading, Paragraph, InlineCode } from "../components/Section";
-
-const Badge = styled("span", {
-  display: "inline-flex",
-  alignItems: "center",
-  gap: "$1",
-  padding: "$1 $3",
-  borderRadius: "$pill",
-  fontSize: "$xs",
-  fontWeight: "$semibold",
-  letterSpacing: "0.3px",
-
-  variants: {
-    kind: {
-      server: {
-        backgroundColor: "$success",
-        color: "white",
-      },
-      client: {
-        backgroundColor: "$accent",
-        color: "white",
-      },
-    },
-  },
-});
-
-const ComponentList = styled("div", {
-  display: "flex",
-  flexDirection: "column",
-  gap: "$3",
-  marginTop: "$4",
-  marginBottom: "$6",
-});
-
-const ComponentRow = styled("div", {
-  display: "flex",
-  alignItems: "center",
-  gap: "$3",
-  padding: "$3 $5",
-  borderRadius: "$md",
-  backgroundColor: "$bgSubtle",
-  border: "1px solid $borderSubtle",
-  transition: "background-color 0.2s ease, border-color 0.2s ease",
-});
-
-const ComponentName = styled("span", {
-  fontFamily: "$mono",
-  fontSize: "$sm",
-  color: "$text",
-  transition: "color 0.2s ease",
-});
-
-const StatBox = styled("div", {
-  display: "flex",
-  gap: "$5",
-  marginTop: "$4",
-  flexWrap: "wrap",
-});
-
-const Stat = styled("div", {
-  padding: "$4 $5",
-  borderRadius: "$lg",
-  backgroundColor: "$bgSubtle",
-  border: "1px solid $border",
-  minWidth: "160px",
-  transition: "background-color 0.2s ease, border-color 0.2s ease",
-});
-
-const StatValue = styled("div", {
-  fontSize: "$2xl",
-  fontWeight: "$bold",
-  color: "$brand",
-  marginBottom: "$1",
-});
-
-const StatLabel = styled("div", {
-  fontSize: "$sm",
-  color: "$textMuted",
-  transition: "color 0.2s ease",
-});
 
 const serverComponents = [
   "Layout",
@@ -124,14 +46,28 @@ export function RscDemo() {
         These components use Seams for styling but ship no JavaScript to the browser. The CSS is
         extracted at render time and included in the initial HTML.
       </Paragraph>
-      <ComponentList>
+      <Stack gap={3} css={{ marginTop: "$4", marginBottom: "$6" }}>
         {serverComponents.map((name) => (
-          <ComponentRow key={name}>
-            <Badge kind="server">Server</Badge>
-            <ComponentName>{name}</ComponentName>
-          </ComponentRow>
+          <Card
+            key={name}
+            padding="sm"
+            css={{
+              display: "flex",
+              alignItems: "center",
+              gap: "$3",
+              padding: "$3 $5",
+              borderColor: "$borderSubtle",
+            }}
+          >
+            <Badge color="success" size="sm">
+              Server
+            </Badge>
+            <Text mono size="sm">
+              {name}
+            </Text>
+          </Card>
         ))}
-      </ComponentList>
+      </Stack>
 
       <SubHeading>Client components on this page</SubHeading>
       <Paragraph>
@@ -139,14 +75,28 @@ export function RscDemo() {
         with <InlineCode>{"'use client'"}</InlineCode>. Seams handles their styles via runtime DOM
         injection -- the same API, just a different delivery mechanism.
       </Paragraph>
-      <ComponentList>
+      <Stack gap={3} css={{ marginTop: "$4", marginBottom: "$6" }}>
         {clientComponents.map((name) => (
-          <ComponentRow key={name}>
-            <Badge kind="client">Client</Badge>
-            <ComponentName>{name}</ComponentName>
-          </ComponentRow>
+          <Card
+            key={name}
+            padding="sm"
+            css={{
+              display: "flex",
+              alignItems: "center",
+              gap: "$3",
+              padding: "$3 $5",
+              borderColor: "$borderSubtle",
+            }}
+          >
+            <Badge color="accent" size="sm">
+              Client
+            </Badge>
+            <Text mono size="sm">
+              {name}
+            </Text>
+          </Card>
         ))}
-      </ComponentList>
+      </Stack>
 
       <SubHeading>CSS output</SubHeading>
       <Paragraph>
@@ -155,20 +105,47 @@ export function RscDemo() {
         tag in the document head. This is the total CSS footprint for the server-rendered portion of
         this page:
       </Paragraph>
-      <StatBox>
-        <Stat>
-          <StatValue>{cssSizeKb} KB</StatValue>
-          <StatLabel>Server CSS output</StatLabel>
-        </Stat>
-        <Stat>
-          <StatValue>{serverComponents.length}</StatValue>
-          <StatLabel>Server components</StatLabel>
-        </Stat>
-        <Stat>
-          <StatValue>{clientComponents.length}</StatValue>
-          <StatLabel>Client components</StatLabel>
-        </Stat>
-      </StatBox>
+      <Row gap={5} wrap css={{ marginTop: "$4" }}>
+        <Card padding="md" css={{ minWidth: "160px" }}>
+          <Text
+            size="2xl"
+            weight="bold"
+            color="brand"
+            css={{ display: "block", marginBottom: "$1" }}
+          >
+            {cssSizeKb} KB
+          </Text>
+          <Text size="sm" color="muted">
+            Server CSS output
+          </Text>
+        </Card>
+        <Card padding="md" css={{ minWidth: "160px" }}>
+          <Text
+            size="2xl"
+            weight="bold"
+            color="brand"
+            css={{ display: "block", marginBottom: "$1" }}
+          >
+            {serverComponents.length}
+          </Text>
+          <Text size="sm" color="muted">
+            Server components
+          </Text>
+        </Card>
+        <Card padding="md" css={{ minWidth: "160px" }}>
+          <Text
+            size="2xl"
+            weight="bold"
+            color="brand"
+            css={{ display: "block", marginBottom: "$1" }}
+          >
+            {clientComponents.length}
+          </Text>
+          <Text size="sm" color="muted">
+            Client components
+          </Text>
+        </Card>
+      </Row>
     </Section>
   );
 }

@@ -45,7 +45,7 @@ jobs:
           DEPLOY_BASE: /seams/examples/vite/
 
       - name: Build Next.js example
-        run: cd examples/with-nextjs && DEPLOY_BASE=/seams/examples/nextjs next build --webpack
+        run: cd examples/with-nextjs && npx next build --webpack
         env:
           DEPLOY_BASE: /seams/examples/nextjs
 

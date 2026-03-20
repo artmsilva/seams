@@ -1,4 +1,4 @@
-import { CodeBlock } from "../components/CodeBlock";
+import { CodeBlock } from "../ds";
 import { Section, SubHeading, Paragraph, InlineCode } from "../components/Section";
 
 const createStitchesCode = `import { createStitches } from "@artmsilva/seams-react";

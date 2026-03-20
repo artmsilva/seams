@@ -1,29 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { styled } from "../seams.config";
 import { lightTheme } from "../seams.config";
-
-const ToggleBtn = styled("button", {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  width: "36px",
-  height: "36px",
-  borderRadius: "$md",
-  border: "1px solid $border",
-  backgroundColor: "transparent",
-  color: "$textSecondary",
-  fontSize: "$lg",
-  cursor: "pointer",
-  transition: "color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease",
-
-  "&:hover": {
-    color: "$text",
-    borderColor: "$textMuted",
-    backgroundColor: "$bgMuted",
-  },
-});
+import { Button } from "../ds";
 
 export function ThemeToggle() {
   const [isDark, setIsDark] = useState(true);
@@ -38,8 +17,23 @@ export function ThemeToggle() {
   }, [isDark]);
 
   return (
-    <ToggleBtn onClick={() => setIsDark((prev) => !prev)} aria-label="Toggle theme">
+    <Button
+      color="ghost"
+      size="sm"
+      onClick={() => setIsDark((prev) => !prev)}
+      aria-label="Toggle theme"
+      css={{
+        width: "36px",
+        height: "36px",
+        padding: 0,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: "$lg",
+        border: "1px solid $border",
+      }}
+    >
       {isDark ? "\u2600" : "\u263E"}
-    </ToggleBtn>
+    </Button>
   );
 }

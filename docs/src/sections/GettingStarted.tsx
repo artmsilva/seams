@@ -1,4 +1,4 @@
-import { CodeBlock } from "../components/CodeBlock";
+import { CodeBlock } from "../ds";
 import { Section, Paragraph, SubHeading, InlineCode } from "../components/Section";
 
 const installReact = `npm install @artmsilva/seams-react`;

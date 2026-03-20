@@ -1,30 +1,27 @@
 import type { ReactNode } from "react";
-import { styled } from "../seams.config";
+import { Row, Box } from "../ds";
 import { Sidebar } from "./Sidebar";
 import { MobileNav } from "./MobileNav";
-
-const LayoutRoot = styled("div", {
-  display: "flex",
-  minHeight: "100vh",
-});
-
-const MainContent = styled("main", {
-  flex: 1,
-  marginLeft: "260px",
-  minWidth: 0,
-
-  "@media (max-width: 767px)": {
-    marginLeft: 0,
-  },
-});
 
 export function Layout({ children }: { children: ReactNode }) {
   const sidebar = <Sidebar />;
 
   return (
-    <LayoutRoot>
+    <Row css={{ minHeight: "100vh" }} align="stretch">
       <MobileNav sidebar={sidebar} />
-      <MainContent>{children}</MainContent>
-    </LayoutRoot>
+      <Box
+        as="main"
+        css={{
+          flex: 1,
+          marginLeft: "260px",
+          minWidth: 0,
+          "@media (max-width: 767px)": {
+            marginLeft: 0,
+          },
+        }}
+      >
+        {children}
+      </Box>
+    </Row>
   );
 }

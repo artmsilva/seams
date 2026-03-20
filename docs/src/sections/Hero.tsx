@@ -1,4 +1,5 @@
 import { styled, keyframes } from "../seams.config";
+import { Text, Row, Card } from "../ds";
 import { CopyButton } from "../components/CopyButton";
 
 const fadeUp = keyframes({
@@ -6,6 +7,7 @@ const fadeUp = keyframes({
   to: { opacity: 1, transform: "translateY(0)" },
 });
 
+// Page-specific: unique gradient background
 const HeroSection = styled("section", {
   position: "relative",
   padding: "$8 $7",
@@ -16,6 +18,7 @@ const HeroSection = styled("section", {
   },
 });
 
+// Page-specific: unique radial gradient
 const GradientBg = styled("div", {
   position: "absolute",
   inset: 0,
@@ -25,12 +28,7 @@ const GradientBg = styled("div", {
   transition: "opacity 0.3s ease",
 });
 
-const HeroContent = styled("div", {
-  position: "relative",
-  maxWidth: "680px",
-  animation: `${fadeUp} 0.6s ease-out both`,
-});
-
+// Page-specific: gradient text title
 const Title = styled("h1", {
   fontSize: "$5xl",
   fontWeight: "$extrabold",
@@ -47,55 +45,7 @@ const Title = styled("h1", {
   },
 });
 
-const Tagline = styled("p", {
-  fontSize: "$xl",
-  color: "$textSecondary",
-  lineHeight: "$relaxed",
-  marginBottom: "$7",
-  maxWidth: "560px",
-  transition: "color 0.2s ease",
-
-  "@media (max-width: 767px)": {
-    fontSize: "$lg",
-  },
-});
-
-const InstallBox = styled("div", {
-  position: "relative",
-  display: "inline-flex",
-  alignItems: "center",
-  gap: "$3",
-  backgroundColor: "$codeBg",
-  border: "1px solid $border",
-  borderRadius: "$lg",
-  padding: "$3 $5",
-  fontFamily: "$mono",
-  fontSize: "$sm",
-  color: "$codeText",
-  transition: "background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease",
-});
-
-const InstallPrefix = styled("span", {
-  color: "$textMuted",
-  userSelect: "none",
-});
-
-const FeatureRow = styled("div", {
-  display: "flex",
-  gap: "$5",
-  marginTop: "$7",
-  flexWrap: "wrap",
-});
-
-const Feature = styled("div", {
-  display: "flex",
-  alignItems: "center",
-  gap: "$2",
-  fontSize: "$sm",
-  color: "$textSecondary",
-  transition: "color 0.2s ease",
-});
-
+// Page-specific: colored dot indicator
 const FeatureDot = styled("span", {
   width: "6px",
   height: "6px",
@@ -117,32 +67,69 @@ export function Hero() {
   return (
     <HeroSection id="hero">
       <GradientBg />
-      <HeroContent>
+      <div
+        style={{
+          position: "relative",
+          maxWidth: "680px",
+          animation: `${fadeUp} 0.6s ease-out both`,
+        }}
+      >
         <Title>Seams</Title>
-        <Tagline>
+        <Text
+          as="p"
+          size="xl"
+          color="secondary"
+          leading="relaxed"
+          css={{
+            marginBottom: "$7",
+            maxWidth: "560px",
+            "@media (max-width: 767px)": { fontSize: "$lg" },
+          }}
+        >
           Zero-runtime CSS-in-JS for React Server Components. Build-time extraction, CSS layers for
           cascade control, and scoped styles — with the Stitches API you already know.
-        </Tagline>
-        <InstallBox>
-          <InstallPrefix>$</InstallPrefix>
+        </Text>
+        <Card
+          bg="code"
+          padding="sm"
+          css={{
+            display: "inline-flex",
+            position: "relative",
+            alignItems: "center",
+            gap: "$3",
+            fontFamily: "$mono",
+            fontSize: "$sm",
+            color: "$codeText",
+            padding: "$3 $5",
+          }}
+        >
+          <Text color="muted" css={{ userSelect: "none" }}>
+            $
+          </Text>
           <span>{installCommand}</span>
           <CopyButton text={installCommand} />
-        </InstallBox>
-        <FeatureRow>
-          <Feature>
+        </Card>
+        <Row gap={5} wrap css={{ marginTop: "$7" }}>
+          <Row gap={2}>
             <FeatureDot color="brand" />
-            Zero runtime overhead
-          </Feature>
-          <Feature>
+            <Text size="sm" color="secondary">
+              Zero runtime overhead
+            </Text>
+          </Row>
+          <Row gap={2}>
             <FeatureDot color="accent" />
-            RSC compatible
-          </Feature>
-          <Feature>
+            <Text size="sm" color="secondary">
+              RSC compatible
+            </Text>
+          </Row>
+          <Row gap={2}>
             <FeatureDot color="success" />
-            Stitches API compatible
-          </Feature>
-        </FeatureRow>
-      </HeroContent>
+            <Text size="sm" color="secondary">
+              Stitches API compatible
+            </Text>
+          </Row>
+        </Row>
+      </div>
     </HeroSection>
   );
 }

@@ -1,14 +1,5 @@
 import { styled } from "../seams.config";
-
-const Nav = styled("nav", {
-  padding: "$6 0",
-});
-
-const LogoArea = styled("div", {
-  padding: "0 $6 $6",
-  borderBottom: "1px solid $border",
-  marginBottom: "$4",
-});
+import { Box, Text } from "../ds";
 
 const LogoText = styled("span", {
   fontSize: "$2xl",
@@ -17,21 +8,6 @@ const LogoText = styled("span", {
   WebkitBackgroundClip: "text",
   WebkitTextFillColor: "transparent",
   backgroundClip: "text",
-});
-
-const LogoTagline = styled("p", {
-  fontSize: "$xs",
-  color: "$textMuted",
-  marginTop: "$1",
-});
-
-const SectionLabel = styled("div", {
-  padding: "$2 $6",
-  fontSize: "$xs",
-  fontWeight: "$semibold",
-  color: "$textMuted",
-  textTransform: "uppercase",
-  letterSpacing: "0.5px",
 });
 
 const NavLink = styled("a", {
@@ -97,14 +73,34 @@ const navSections: NavSection[] = [
 
 export function Sidebar() {
   return (
-    <Nav>
-      <LogoArea>
+    <Box as="nav" py={6}>
+      <Box
+        css={{
+          padding: "0 $6 $6",
+          borderBottom: "1px solid $border",
+          marginBottom: "$4",
+        }}
+      >
         <LogoText>Seams</LogoText>
-        <LogoTagline>CSS-in-JS for RSC</LogoTagline>
-      </LogoArea>
+        <Text as="p" size="xs" color="muted" css={{ marginTop: "$1" }}>
+          CSS-in-JS for RSC
+        </Text>
+      </Box>
       {navSections.map((section) => (
         <div key={section.title}>
-          <SectionLabel>{section.title}</SectionLabel>
+          <Text
+            size="xs"
+            weight="semibold"
+            color="muted"
+            css={{
+              display: "block",
+              padding: "$2 $6",
+              textTransform: "uppercase",
+              letterSpacing: "0.5px",
+            }}
+          >
+            {section.title}
+          </Text>
           {section.items.map((item) => (
             <NavLink key={item.href} href={item.href}>
               {item.label}
@@ -112,6 +108,6 @@ export function Sidebar() {
           ))}
         </div>
       ))}
-    </Nav>
+    </Box>
   );
 }

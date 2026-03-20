@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { styled } from "../seams.config";
 
+// This button has unique hover-reveal behavior (opacity 0 -> 1 on parent hover)
+// that doesn't map to any DS Button variant, so it stays as a page-specific component.
 const CopyBtn = styled("button", {
   position: "absolute",
   top: "$2",

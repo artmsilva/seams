@@ -1,4 +1,5 @@
 import { styled } from "../seams.config";
+import { Row, Badge, Link } from "../ds";
 import { ThemeToggle } from "./ThemeToggle";
 
 const HeaderBar = styled("header", {
@@ -20,54 +21,27 @@ const HeaderBar = styled("header", {
   },
 });
 
-const HeaderActions = styled("div", {
-  display: "flex",
-  alignItems: "center",
-  gap: "$3",
-});
-
-const GitHubLink = styled("a", {
-  display: "flex",
-  alignItems: "center",
-  gap: "$2",
-  fontSize: "$sm",
-  fontWeight: "$medium",
-  color: "$textSecondary",
-  textDecoration: "none",
-  padding: "$1 $3",
-  borderRadius: "$md",
-  transition: "color 0.15s ease, background-color 0.15s ease",
-
-  "&:hover": {
-    color: "$text",
-    backgroundColor: "$bgMuted",
-  },
-});
-
-const VersionBadge = styled("span", {
-  fontSize: "$xs",
-  fontWeight: "$medium",
-  color: "$brand",
-  backgroundColor: "$bgMuted",
-  padding: "$1 $2",
-  borderRadius: "$pill",
-  border: "1px solid $border",
-});
-
 export function Header() {
   return (
     <HeaderBar>
-      <HeaderActions>
-        <VersionBadge>v0.1.0</VersionBadge>
-        <GitHubLink
+      <Row gap={3}>
+        <Badge color="muted" size="sm" css={{ border: "1px solid $border", color: "$brand" }}>
+          v0.1.0
+        </Badge>
+        <Link
+          style="nav"
           href="https://github.com/artmsilva/seams"
           target="_blank"
           rel="noopener noreferrer"
+          css={{
+            fontSize: "$sm",
+            fontWeight: "$medium",
+          }}
         >
           GitHub
-        </GitHubLink>
+        </Link>
         <ThemeToggle />
-      </HeaderActions>
+      </Row>
     </HeaderBar>
   );
 }

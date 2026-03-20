@@ -2,79 +2,24 @@
 
 import { useState } from "react";
 import { styled, keyframes } from "../seams.config";
+import { Box, Heading, Text, Row, Card, Link } from "../ds";
 
-const ExamplesSection = styled("section", {
-  padding: "$8 $7",
-  borderBottom: "1px solid $borderSubtle",
-  maxWidth: "840px",
-  transition: "border-color 0.2s ease",
-
-  "@media (max-width: 767px)": {
-    padding: "$7 $4",
-  },
+// Page-specific: animated card with keyframe
+const fadeSlideIn = keyframes({
+  from: { opacity: 0, transform: "translateY(12px)" },
+  to: { opacity: 1, transform: "translateY(0)" },
 });
 
-const SectionHeading = styled("h2", {
-  fontSize: "$3xl",
-  fontWeight: "$bold",
-  color: "$text",
-  marginBottom: "$6",
-  lineHeight: "$tight",
-  transition: "color 0.2s ease",
-
-  "@media (max-width: 767px)": {
-    fontSize: "$2xl",
-  },
-});
-
-const SubHeading = styled("h3", {
-  fontSize: "$xl",
-  fontWeight: "$semibold",
-  color: "$text",
-  marginTop: "$7",
-  marginBottom: "$3",
-  transition: "color 0.2s ease",
-});
-
-const Paragraph = styled("p", {
-  fontSize: "$base",
-  lineHeight: "$relaxed",
-  color: "$textSecondary",
-  marginBottom: "$4",
-  maxWidth: "680px",
-  transition: "color 0.2s ease",
-});
-
-const DemoArea = styled("div", {
-  padding: "$6",
+const AnimatedCard = styled("div", {
+  padding: "$5",
   borderRadius: "$lg",
+  backgroundColor: "$bgElevated",
   border: "1px solid $border",
-  backgroundColor: "$bgSubtle",
-  marginBottom: "$4",
+  animation: `${fadeSlideIn} 0.5s ease-out both`,
   transition: "background-color 0.2s ease, border-color 0.2s ease",
 });
 
-const DemoRow = styled("div", {
-  display: "flex",
-  gap: "$3",
-  flexWrap: "wrap",
-  alignItems: "center",
-  marginBottom: "$4",
-
-  "&:last-child": {
-    marginBottom: 0,
-  },
-});
-
-const DemoLabel = styled("span", {
-  fontSize: "$sm",
-  fontWeight: "$medium",
-  color: "$textMuted",
-  minWidth: "100px",
-  transition: "color 0.2s ease",
-});
-
-// Interactive Button component using Seams
+// Page-specific: interactive button demo with custom variants
 const DemoButton = styled("button", {
   border: "none",
   fontFamily: "$body",
@@ -147,22 +92,7 @@ const DemoButton = styled("button", {
   },
 });
 
-// Animated component
-const fadeSlideIn = keyframes({
-  from: { opacity: 0, transform: "translateY(12px)" },
-  to: { opacity: 1, transform: "translateY(0)" },
-});
-
-const AnimatedCard = styled("div", {
-  padding: "$5",
-  borderRadius: "$lg",
-  backgroundColor: "$bgElevated",
-  border: "1px solid $border",
-  animation: `${fadeSlideIn} 0.5s ease-out both`,
-  transition: "background-color 0.2s ease, border-color 0.2s ease",
-});
-
-// Variant toggle controls
+// Page-specific: toggle group for variant selector
 const ToggleGroup = styled("div", {
   display: "flex",
   gap: "$1",
@@ -202,33 +132,6 @@ const ToggleButton = styled("button", {
   },
 });
 
-const RepoLink = styled("a", {
-  display: "inline-flex",
-  alignItems: "center",
-  gap: "$2",
-  padding: "$3 $5",
-  borderRadius: "$md",
-  border: "1px solid $border",
-  fontSize: "$sm",
-  fontWeight: "$medium",
-  color: "$textSecondary",
-  textDecoration: "none",
-  transition: "color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease",
-
-  "&:hover": {
-    color: "$text",
-    borderColor: "$textMuted",
-    backgroundColor: "$bgMuted",
-  },
-});
-
-const LinkRow = styled("div", {
-  display: "flex",
-  gap: "$3",
-  marginTop: "$6",
-  flexWrap: "wrap",
-});
-
 type ButtonSize = "sm" | "md" | "lg";
 type ButtonColor = "brand" | "accent" | "success" | "outline";
 
@@ -241,21 +144,63 @@ export function Examples() {
   const colors: ButtonColor[] = ["brand", "accent", "success", "outline"];
 
   return (
-    <ExamplesSection id="examples">
-      <SectionHeading>Examples</SectionHeading>
-      <Paragraph>
+    <Box
+      as="section"
+      id="examples"
+      py={8}
+      px={7}
+      css={{
+        borderBottom: "1px solid $borderSubtle",
+        maxWidth: "840px",
+        transition: "border-color 0.2s ease",
+        "@media (max-width: 767px)": { padding: "$7 $4" },
+      }}
+    >
+      <Heading
+        level={2}
+        css={{
+          fontSize: "$3xl",
+          marginBottom: "$6",
+          "@media (max-width: 767px)": { fontSize: "$2xl" },
+        }}
+      >
+        Examples
+      </Heading>
+      <Text
+        as="p"
+        color="secondary"
+        leading="relaxed"
+        css={{ marginBottom: "$4", maxWidth: "680px" }}
+      >
         These interactive demos are built with Seams -- the same library powering all the styles on
         this documentation site.
-      </Paragraph>
+      </Text>
 
-      <SubHeading>Button with variant toggles</SubHeading>
-      <Paragraph>
+      <Heading
+        level={3}
+        css={{
+          fontSize: "$xl",
+          fontWeight: "$semibold",
+          marginTop: "$7",
+          marginBottom: "$3",
+        }}
+      >
+        Button with variant toggles
+      </Heading>
+      <Text
+        as="p"
+        color="secondary"
+        leading="relaxed"
+        css={{ marginBottom: "$4", maxWidth: "680px" }}
+      >
         Toggle size and color variants to see how Seams handles variant composition. The compound
         variant (large + brand) applies bold uppercase styling.
-      </Paragraph>
-      <DemoArea>
-        <DemoRow>
-          <DemoLabel>Size</DemoLabel>
+      </Text>
+      <Card padding="md" css={{ padding: "$6", marginBottom: "$4" }}>
+        <Row gap={3} wrap css={{ marginBottom: "$4" }}>
+          <Text size="sm" weight="medium" color="muted" css={{ minWidth: "100px" }}>
+            Size
+          </Text>
           <ToggleGroup>
             {sizes.map((s) => (
               <ToggleButton key={s} active={size === s} onClick={() => setSize(s)}>
@@ -263,9 +208,11 @@ export function Examples() {
               </ToggleButton>
             ))}
           </ToggleGroup>
-        </DemoRow>
-        <DemoRow>
-          <DemoLabel>Color</DemoLabel>
+        </Row>
+        <Row gap={3} wrap css={{ marginBottom: "$4" }}>
+          <Text size="sm" weight="medium" color="muted" css={{ minWidth: "100px" }}>
+            Color
+          </Text>
           <ToggleGroup>
             {colors.map((c) => (
               <ToggleButton key={c} active={color === c} onClick={() => setColor(c)}>
@@ -273,51 +220,87 @@ export function Examples() {
               </ToggleButton>
             ))}
           </ToggleGroup>
-        </DemoRow>
-        <DemoRow>
-          <DemoLabel>Result</DemoLabel>
+        </Row>
+        <Row gap={3} wrap>
+          <Text size="sm" weight="medium" color="muted" css={{ minWidth: "100px" }}>
+            Result
+          </Text>
           <DemoButton size={size} color={color}>
             Styled Button
           </DemoButton>
-        </DemoRow>
-      </DemoArea>
+        </Row>
+      </Card>
 
-      <SubHeading>Keyframe animation</SubHeading>
-      <Paragraph>
+      <Heading
+        level={3}
+        css={{
+          fontSize: "$xl",
+          fontWeight: "$semibold",
+          marginTop: "$7",
+          marginBottom: "$3",
+        }}
+      >
+        Keyframe animation
+      </Heading>
+      <Text
+        as="p"
+        color="secondary"
+        leading="relaxed"
+        css={{ marginBottom: "$4", maxWidth: "680px" }}
+      >
         Click replay to trigger the fade-slide animation. This uses <code>keyframes()</code> from
         Seams.
-      </Paragraph>
-      <DemoArea>
-        <DemoRow>
+      </Text>
+      <Card padding="md" css={{ padding: "$6", marginBottom: "$4" }}>
+        <Row gap={3} wrap css={{ marginBottom: "$4" }}>
           <DemoButton size="sm" color="accent" onClick={() => setAnimKey((k) => k + 1)}>
             Replay animation
           </DemoButton>
-        </DemoRow>
+        </Row>
         <AnimatedCard key={animKey}>
           This card animates in with a fade + slide transition defined entirely in Seams.
         </AnimatedCard>
-      </DemoArea>
+      </Card>
 
-      <SubHeading>Starter templates</SubHeading>
-      <Paragraph>
+      <Heading
+        level={3}
+        css={{
+          fontSize: "$xl",
+          fontWeight: "$semibold",
+          marginTop: "$7",
+          marginBottom: "$3",
+        }}
+      >
+        Starter templates
+      </Heading>
+      <Text
+        as="p"
+        color="secondary"
+        leading="relaxed"
+        css={{ marginBottom: "$4", maxWidth: "680px" }}
+      >
         Explore the example projects in the repository for complete starter setups.
-      </Paragraph>
-      <LinkRow>
-        <RepoLink
+      </Text>
+      <Row gap={3} wrap css={{ marginTop: "$6" }}>
+        <Link
+          style="standalone"
           href="https://github.com/artmsilva/seams/tree/main/examples/with-vite"
           target="_blank"
           rel="noopener noreferrer"
+          css={{ fontSize: "$sm" }}
         >
           Vite + React example
-        </RepoLink>
-        <RepoLink
+        </Link>
+        <Link
+          style="standalone"
           href="https://github.com/artmsilva/seams/tree/main/examples/with-nextjs"
           target="_blank"
           rel="noopener noreferrer"
+          css={{ fontSize: "$sm" }}
         >
           Next.js example
-        </RepoLink>
-      </LinkRow>
-    </ExamplesSection>
+        </Link>
+      </Row>
+    </Box>
   );
 }

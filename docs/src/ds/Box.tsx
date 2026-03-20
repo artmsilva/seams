@@ -1,0 +1,66 @@
+import { styled } from "../seams.config";
+
+export const Box = styled("div", {
+  variants: {
+    padding: {
+      0: { padding: "0" },
+      1: { padding: "$1" },
+      2: { padding: "$2" },
+      3: { padding: "$3" },
+      4: { padding: "$4" },
+      5: { padding: "$5" },
+      6: { padding: "$6" },
+      7: { padding: "$7" },
+      8: { padding: "$8" },
+    },
+    px: {
+      0: { px: "0" },
+      1: { px: "$1" },
+      2: { px: "$2" },
+      3: { px: "$3" },
+      4: { px: "$4" },
+      5: { px: "$5" },
+      6: { px: "$6" },
+      7: { px: "$7" },
+      8: { px: "$8" },
+    },
+    py: {
+      0: { py: "0" },
+      1: { py: "$1" },
+      2: { py: "$2" },
+      3: { py: "$3" },
+      4: { py: "$4" },
+      5: { py: "$5" },
+      6: { py: "$6" },
+      7: { py: "$7" },
+      8: { py: "$8" },
+    },
+    radius: {
+      none: { borderRadius: "0" },
+      sm: { borderRadius: "$sm" },
+      md: { borderRadius: "$md" },
+      lg: { borderRadius: "$lg" },
+      xl: { borderRadius: "$xl" },
+      pill: { borderRadius: "$pill" },
+    },
+    bg: {
+      default: { backgroundColor: "$bg" },
+      subtle: { backgroundColor: "$bgSubtle" },
+      muted: { backgroundColor: "$bgMuted" },
+      elevated: { backgroundColor: "$bgElevated" },
+      code: { backgroundColor: "$codeBg" },
+    },
+    border: {
+      none: { border: "none" },
+      default: { border: "1px solid $border" },
+      subtle: { border: "1px solid $borderSubtle" },
+    },
+    shadow: {
+      none: { boxShadow: "none" },
+      sm: { boxShadow: "$sm" },
+      md: { boxShadow: "$md" },
+      lg: { boxShadow: "$lg" },
+      glow: { boxShadow: "$glow" },
+    },
+  },
+});
