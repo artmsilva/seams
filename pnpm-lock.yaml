@@ -109,12 +109,43 @@ importers:
         specifier: npm:@voidzero-dev/vite-plus-test@latest
         version: '@voidzero-dev/vite-plus-test@0.1.13(@types/node@22.19.15)(esbuild@0.27.4)(terser@5.46.1)(typescript@5.9.3)(vite@8.0.1(@types/node@22.19.15)(esbuild@0.27.4)(terser@5.46.1))'
 
+  docs:
+    dependencies:
+      '@artmsilva/seams-react':
+        specifier: workspace:*
+        version: link:../packages/react
+      '@artmsilva/seams-vite-plugin':
+        specifier: workspace:*
+        version: link:../packages/vite-plugin
+      '@vitejs/plugin-react':
+        specifier: ^4.5.2
+        version: 4.7.0(@voidzero-dev/vite-plus-core@0.1.13(@types/node@22.19.15)(esbuild@0.27.4)(terser@5.46.1)(typescript@5.9.3))
+      react:
+        specifier: 'catalog:'
+        version: 19.2.4
+      react-dom:
+        specifier: ^19.0.0
+        version: 19.2.4(react@19.2.4)
+    devDependencies:
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.2.14
+      '@types/react-dom':
+        specifier: ^19.0.0
+        version: 19.2.3(@types/react@19.2.14)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vite:
+        specifier: npm:@voidzero-dev/vite-plus-core@latest
+        version: '@voidzero-dev/vite-plus-core@0.1.13(@types/node@22.19.15)(esbuild@0.27.4)(terser@5.46.1)(typescript@5.9.3)'
+
   examples/with-nextjs:
     dependencies:
-      '@stitches-rsc/next-plugin':
+      '@artmsilva/seams-next-plugin':
         specifier: workspace:*
         version: link:../../packages/next-plugin
-      '@stitches-rsc/react':
+      '@artmsilva/seams-react':
         specifier: workspace:*
         version: link:../../packages/react
       next:
@@ -139,10 +170,10 @@ importers:
 
   examples/with-vite:
     dependencies:
-      '@stitches-rsc/react':
+      '@artmsilva/seams-react':
         specifier: workspace:*
         version: link:../../packages/react
-      '@stitches-rsc/vite-plugin':
+      '@artmsilva/seams-vite-plugin':
         specifier: workspace:*
         version: link:../../packages/vite-plugin
       '@vitejs/plugin-react':
@@ -183,7 +214,7 @@ importers:
 
   packages/next-plugin:
     dependencies:
-      '@stitches-rsc/plugin-common':
+      '@artmsilva/seams-plugin-common':
         specifier: workspace:*
         version: link:../plugin-common
     devDependencies:
@@ -202,6 +233,9 @@ importers:
 
   packages/plugin-common:
     dependencies:
+      '@artmsilva/seams-core':
+        specifier: workspace:*
+        version: link:../core
       '@babel/core':
         specifier: 'catalog:'
         version: 7.29.0
@@ -217,9 +251,6 @@ importers:
       '@babel/types':
         specifier: 'catalog:'
         version: 7.29.0
-      '@stitches-rsc/core':
-        specifier: workspace:*
-        version: link:../core
     devDependencies:
       '@types/babel__core':
         specifier: 'catalog:'
@@ -239,7 +270,7 @@ importers:
 
   packages/react:
     dependencies:
-      '@stitches-rsc/core':
+      '@artmsilva/seams-core':
         specifier: workspace:*
         version: link:../core
     devDependencies:
@@ -258,7 +289,7 @@ importers:
 
   packages/vite-plugin:
     dependencies:
-      '@stitches-rsc/plugin-common':
+      '@artmsilva/seams-plugin-common':
         specifier: workspace:*
         version: link:../plugin-common
       vite:

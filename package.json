@@ -1,8 +1,8 @@
 {
-  "name": "stitches-rsc",
+  "name": "seams",
   "version": "0.0.0",
   "private": true,
-  "description": "Zero-runtime Stitches.js replacement for React Server Components",
+  "description": "Zero-runtime CSS-in-JS for React Server Components, inspired by Stitches.js",
   "type": "module",
   "scripts": {
     "build": "pnpm -r build",

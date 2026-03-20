@@ -67,7 +67,7 @@ export default function Home() {
       <Container>
         <Section>
           <Row css={{ justifyContent: "space-between", marginBottom: "$3" }}>
-            <Heading css={{ marginBottom: 0 }}>Stitches RSC + Next.js</Heading>
+            <Heading css={{ marginBottom: 0 }}>Seams + Next.js</Heading>
             <ThemeToggle isDark={isDark} onToggle={() => setIsDark((prev) => !prev)} />
           </Row>
         </Section>

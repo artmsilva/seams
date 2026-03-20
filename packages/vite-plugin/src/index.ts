@@ -1,13 +1,13 @@
 import type { Plugin, ResolvedConfig } from "vite";
 import path from "path";
 
-import { processSource } from "@stitches-rsc/plugin-common";
-import type { ProcessOptions } from "@stitches-rsc/plugin-common";
+import { processSource } from "@artmsilva/seams-plugin-common";
+import type { ProcessOptions } from "@artmsilva/seams-plugin-common";
 
 /**
- * Options for the Stitches RSC Vite plugin.
+ * Options for the Seams Vite plugin.
  */
-export interface StitchesVitePluginOptions extends ProcessOptions {
+export interface SeamsVitePluginOptions extends ProcessOptions {
   /** File extensions to process */
   extensions?: string[];
   /** Directories to include (relative to project root) */
@@ -25,19 +25,19 @@ interface CollectedCss {
 }
 
 /**
- * Creates a Vite plugin for Stitches RSC.
+ * Creates a Vite plugin for Seams.
  *
  * @example
  * ```ts
  * // vite.config.ts
  * import { defineConfig } from 'vite';
  * import react from '@vitejs/plugin-react';
- * import stitchesRSC from '@stitches-rsc/vite-plugin';
+ * import seams from '@artmsilva/seams-vite-plugin';
  *
  * export default defineConfig({
  *   plugins: [
  *     react(),
- *     stitchesRSC({
+ *     seams({
  *       useScope: true,
  *       useLayers: true,
  *     }),
@@ -45,7 +45,7 @@ interface CollectedCss {
  * });
  * ```
  */
-export const stitchesRSC = (options: StitchesVitePluginOptions = {}): Plugin => {
+export const seams = (options: SeamsVitePluginOptions = {}): Plugin => {
   const {
     extensions = [".tsx", ".ts", ".jsx", ".js"],
     include = ["src", "app", "components"],
@@ -57,11 +57,11 @@ export const stitchesRSC = (options: StitchesVitePluginOptions = {}): Plugin => 
   const collectedCss: Map<string, CollectedCss> = new Map();
 
   // Virtual module ID for the combined CSS
-  const virtualModuleId = "virtual:stitches-rsc.css";
+  const virtualModuleId = "virtual:seams.css";
   const resolvedVirtualModuleId = "\0" + virtualModuleId;
 
   return {
-    name: "stitches-rsc",
+    name: "seams",
     enforce: "pre",
 
     configResolved(resolvedConfig) {
@@ -130,19 +130,19 @@ export const stitchesRSC = (options: StitchesVitePluginOptions = {}): Plugin => 
             ? {
                 version: 3 as const,
                 sources: [id],
-                names: [],
+                names: (result.map as { names?: string[] }).names ?? [],
                 mappings: (result.map as { mappings?: string }).mappings ?? "",
               }
             : undefined,
         };
       } catch (error) {
-        this.error(`Error processing Stitches in ${id}: ${String(error)}`);
+        this.error(`Error processing Seams in ${id}: ${String(error)}`);
         return null;
       }
     },
 
     handleHotUpdate({ file, server }) {
-      // When a file with Stitches changes, invalidate the virtual CSS module
+      // When a file with Seams changes, invalidate the virtual CSS module
       if (collectedCss.has(file)) {
         const mod = server.moduleGraph.getModuleById(resolvedVirtualModuleId);
         if (mod) {
@@ -160,7 +160,7 @@ export const stitchesRSC = (options: StitchesVitePluginOptions = {}): Plugin => 
 
         this.emitFile({
           type: "asset",
-          fileName: "stitches.css",
+          fileName: "seams.css",
           source: allCss,
         });
       }
@@ -169,7 +169,13 @@ export const stitchesRSC = (options: StitchesVitePluginOptions = {}): Plugin => 
 };
 
 // Default export
-export default stitchesRSC;
+export default seams;
+
+// Backward compatibility aliases
+/** @deprecated Use `SeamsVitePluginOptions` instead */
+export type StitchesVitePluginOptions = SeamsVitePluginOptions;
+/** @deprecated Use `seams` instead */
+export const stitchesRSC = seams;
 
 // Re-export types
-export type { ProcessOptions, ProcessResult } from "@stitches-rsc/plugin-common";
+export type { ProcessOptions, ProcessResult } from "@artmsilva/seams-plugin-common";

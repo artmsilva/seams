@@ -36,8 +36,8 @@ What actually happened.
 
 - Node.js version:
 - Package versions:
-  - `@stitches-rsc/core`:
-  - `@stitches-rsc/react`:
+  - `@artmsilva/seams-core`:
+  - `@artmsilva/seams-react`:
 - Framework: (Next.js / Vite / Other)
 - Framework version:
 - OS:

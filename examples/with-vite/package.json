@@ -1,5 +1,5 @@
 {
-  "name": "@stitches-rsc/example-vite",
+  "name": "@artmsilva/seams-example-vite",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -9,8 +9,8 @@
     "preview": "vp preview"
   },
   "dependencies": {
-    "@stitches-rsc/react": "workspace:*",
-    "@stitches-rsc/vite-plugin": "workspace:*",
+    "@artmsilva/seams-react": "workspace:*",
+    "@artmsilva/seams-vite-plugin": "workspace:*",
     "@vitejs/plugin-react": "^4.5.2",
     "react": "catalog:",
     "react-dom": "^19.0.0"

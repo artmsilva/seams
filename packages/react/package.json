@@ -1,19 +1,20 @@
 {
-  "name": "@stitches-rsc/react",
+  "name": "@artmsilva/seams-react",
   "version": "0.1.0",
-  "description": "React bindings for Stitches RSC",
+  "description": "React bindings for Seams",
   "keywords": [
     "css-in-js",
     "react",
     "react-server-components",
     "rsc",
+    "seams",
     "stitches",
     "styling"
   ],
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/stitches-rsc/stitches-rsc.git",
+    "url": "https://github.com/artmsilva/seams.git",
     "directory": "packages/react"
   },
   "files": [
@@ -36,6 +37,10 @@
       }
     }
   },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://npm.pkg.github.com"
+  },
   "scripts": {
     "build": "tsup && tsc --emitDeclarationOnly --declaration --outDir dist",
     "dev": "tsup --watch",
@@ -43,7 +48,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@stitches-rsc/core": "workspace:*"
+    "@artmsilva/seams-core": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "catalog:",

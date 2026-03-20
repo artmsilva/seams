@@ -169,6 +169,8 @@ export const analyzeSource = (source: string, filename: string): AnalysisResult 
     ImportDeclaration(path) {
       const source = path.node.source.value;
       if (
+        source === "@artmsilva/seams-react" ||
+        source === "@artmsilva/seams-core" ||
         source === "@stitches-rsc/react" ||
         source === "@stitches-rsc/core" ||
         source === "@stitches/react" ||

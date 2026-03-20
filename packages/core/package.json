@@ -1,18 +1,19 @@
 {
-  "name": "@stitches-rsc/core",
+  "name": "@artmsilva/seams-core",
   "version": "0.1.0",
-  "description": "Isomorphic core API for Stitches RSC (no React dependency)",
+  "description": "Isomorphic core API for Seams (no React dependency)",
   "keywords": [
     "css-in-js",
     "react-server-components",
     "rsc",
+    "seams",
     "stitches",
     "styling"
   ],
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/stitches-rsc/stitches-rsc.git",
+    "url": "https://github.com/artmsilva/seams.git",
     "directory": "packages/core"
   },
   "files": [
@@ -34,6 +35,10 @@
         "default": "./dist/index.cjs"
       }
     }
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://npm.pkg.github.com"
   },
   "scripts": {
     "build": "tsup && tsc --emitDeclarationOnly --declaration --outDir dist",

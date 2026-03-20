@@ -1,9 +1,9 @@
 import type { NextConfig } from "next";
-import { withStitchesRSC } from "@stitches-rsc/next-plugin";
+import { withSeams } from "@artmsilva/seams-next-plugin";
 
 const nextConfig: NextConfig = {};
 
-export default withStitchesRSC({
+export default withSeams({
   useScope: true,
   useLayers: true,
 })(nextConfig);

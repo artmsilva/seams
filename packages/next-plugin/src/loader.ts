@@ -1,24 +1,21 @@
 import type { LoaderContext } from "webpack";
 
-import { processSource } from "@stitches-rsc/plugin-common";
-import type { ProcessOptions } from "@stitches-rsc/plugin-common";
+import { processSource } from "@artmsilva/seams-plugin-common";
+import type { ProcessOptions } from "@artmsilva/seams-plugin-common";
 
 /**
- * Options for the Stitches RSC webpack loader.
+ * Options for the Seams webpack loader.
  */
-export interface StitchesLoaderOptions extends ProcessOptions {
+export interface SeamsLoaderOptions extends ProcessOptions {
   /** File extensions to process */
   extensions?: string[];
 }
 
 /**
- * Webpack loader for processing Stitches RSC files.
+ * Webpack loader for processing Seams files.
  * Extracts CSS at build time for RSC support.
  */
-export default function stitchesLoader(
-  this: LoaderContext<StitchesLoaderOptions>,
-  source: string,
-): void {
+export default function seamsLoader(this: LoaderContext<SeamsLoaderOptions>, source: string): void {
   const callback = this.async();
   const options = this.getOptions();
   const filename = this.resourcePath;
@@ -48,7 +45,7 @@ export default function stitchesLoader(
 
     // Emit CSS as a separate asset
     if (result.css) {
-      const cssFilename = filename.replace(/\.(tsx?|jsx?)$/, ".stitches.css");
+      const cssFilename = filename.replace(/\.(tsx?|jsx?)$/, ".seams.css");
       this.emitFile(cssFilename, result.css);
     }
 
@@ -58,7 +55,7 @@ export default function stitchesLoader(
       const cssImport = `import './${filename
         .split("/")
         .pop()
-        ?.replace(/\.(tsx?|jsx?)$/, ".stitches.css")}';\n`;
+        ?.replace(/\.(tsx?|jsx?)$/, ".seams.css")}';\n`;
       transformedCode = cssImport + transformedCode;
     }
 

@@ -1,17 +1,17 @@
 ---
 name: migrate-stitches
-description: This skill should be used when the user asks to "migrate from Stitches", "convert Stitches to RSC", "upgrade to Stitches RSC", "replace @stitches/react", or mentions migrating existing Stitches.js code to Stitches RSC.
+description: This skill should be used when the user asks to "migrate from Stitches", "convert Stitches to RSC", "upgrade to Seams", "replace @stitches/react", or mentions migrating existing Stitches.js code to Seams.
 ---
 
-# Migrate from Stitches.js to Stitches RSC
+# Migrate from Stitches.js to Seams
 
-Guide migration from the original `@stitches/react` or `@stitches/core` packages to `@stitches-rsc/react` or `@stitches-rsc/core`.
+Guide migration from the original `@stitches/react` or `@stitches/core` packages to `@artmsilva/seams-react` or `@artmsilva/seams-core`.
 
 ## Migration Overview
 
-Stitches RSC is a 1:1 API-compatible replacement. Most code works without changes. The key differences are:
+Seams is a 1:1 API-compatible replacement. Most code works without changes. The key differences are:
 
-1. **Package names**: `@stitches/react` → `@stitches-rsc/react`
+1. **Package names**: `@stitches/react` → `@artmsilva/seams-react`
 2. **Build plugin required**: Add Next.js or Vite plugin for CSS extraction
 3. **No runtime CSS**: CSS is extracted at build time, not generated at runtime
 
@@ -49,7 +49,7 @@ Replace Stitches packages in `package.json`:
 ```json
 {
   "dependencies": {
-    "@stitches-rsc/react": "^0.1.0"
+    "@artmsilva/seams-react": "^0.1.0"
   }
 }
 ```
@@ -59,7 +59,7 @@ For core-only usage:
 ```json
 {
   "dependencies": {
-    "@stitches-rsc/core": "^0.1.0"
+    "@artmsilva/seams-core": "^0.1.0"
   }
 }
 ```
@@ -74,19 +74,19 @@ import { styled, css, globalCss, keyframes, createTheme } from "@stitches/react"
 import { createStitches } from "@stitches/react";
 
 // After
-import { styled, css, globalCss, keyframes, createTheme } from "@stitches-rsc/react";
-import { createStitches } from "@stitches-rsc/react";
+import { styled, css, globalCss, keyframes, createTheme } from "@artmsilva/seams-react";
+import { createStitches } from "@artmsilva/seams-react";
 ```
 
 Use sed for bulk replacement:
 
 ```bash
 # macOS
-find . -type f \( -name "*.ts" -o -name "*.tsx" \) -exec sed -i '' "s/@stitches\/react/@stitches-rsc\/react/g" {} +
-find . -type f \( -name "*.ts" -o -name "*.tsx" \) -exec sed -i '' "s/@stitches\/core/@stitches-rsc\/core/g" {} +
+find . -type f \( -name "*.ts" -o -name "*.tsx" \) -exec sed -i '' "s/@stitches\/react/@artmsilva\/seams-react/g" {} +
+find . -type f \( -name "*.ts" -o -name "*.tsx" \) -exec sed -i '' "s/@stitches\/core/@artmsilva\/seams-core/g" {} +
 
 # Linux
-find . -type f \( -name "*.ts" -o -name "*.tsx" \) -exec sed -i "s/@stitches\/react/@stitches-rsc\/react/g" {} +
+find . -type f \( -name "*.ts" -o -name "*.tsx" \) -exec sed -i "s/@stitches\/react/@artmsilva\/seams-react/g" {} +
 ```
 
 ### Step 4: Add Build Plugin
@@ -94,15 +94,15 @@ find . -type f \( -name "*.ts" -o -name "*.tsx" \) -exec sed -i "s/@stitches\/re
 **For Next.js** - Install and configure:
 
 ```bash
-pnpm add @stitches-rsc/next-plugin
+pnpm add @artmsilva/seams-next-plugin
 ```
 
 Update `next.config.js`:
 
 ```javascript
-const withStitchesRSC = require("@stitches-rsc/next-plugin");
+const withSeams = require("@artmsilva/seams-next-plugin");
 
-module.exports = withStitchesRSC({
+module.exports = withSeams({
   useScope: true,
   useLayers: true,
 })({
@@ -113,7 +113,7 @@ module.exports = withStitchesRSC({
 **For Vite** - Install and configure:
 
 ```bash
-pnpm add @stitches-rsc/vite-plugin
+pnpm add @artmsilva/seams-vite-plugin
 ```
 
 Update `vite.config.ts`:
@@ -121,12 +121,12 @@ Update `vite.config.ts`:
 ```typescript
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import stitchesRSC from "@stitches-rsc/vite-plugin";
+import seams from "@artmsilva/seams-vite-plugin";
 
 export default defineConfig({
   plugins: [
     react(),
-    stitchesRSC({
+    seams({
       useScope: true,
       useLayers: true,
     }),

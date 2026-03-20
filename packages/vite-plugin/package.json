@@ -1,10 +1,11 @@
 {
-  "name": "@stitches-rsc/vite-plugin",
+  "name": "@artmsilva/seams-vite-plugin",
   "version": "0.1.0",
-  "description": "Vite integration for Stitches RSC",
+  "description": "Vite integration for Seams",
   "keywords": [
     "css-in-js",
     "rsc",
+    "seams",
     "stitches",
     "vite",
     "vite-plugin"
@@ -12,7 +13,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/stitches-rsc/stitches-rsc.git",
+    "url": "https://github.com/artmsilva/seams.git",
     "directory": "packages/vite-plugin"
   },
   "files": [
@@ -35,6 +36,10 @@
       }
     }
   },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://npm.pkg.github.com"
+  },
   "scripts": {
     "build": "tsup && tsc --emitDeclarationOnly --declaration --outDir dist",
     "dev": "tsup --watch",
@@ -42,7 +47,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@stitches-rsc/plugin-common": "workspace:*"
+    "@artmsilva/seams-plugin-common": "workspace:*"
   },
   "devDependencies": {
     "tsup": "catalog:",

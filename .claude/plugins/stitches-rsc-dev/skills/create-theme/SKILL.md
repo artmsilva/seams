@@ -1,18 +1,18 @@
 ---
 name: create-theme
-description: This skill should be used when the user asks to "create a theme", "set up theme tokens", "configure design tokens", "add colors/spacing/typography", "build a theme config", or wants help structuring a Stitches RSC theme configuration.
+description: This skill should be used when the user asks to "create a theme", "set up theme tokens", "configure design tokens", "add colors/spacing/typography", "build a theme config", or wants help structuring a Seams theme configuration.
 ---
 
-# Create Stitches RSC Theme
+# Create Seams Theme
 
-Guide creation of properly structured and typed theme configurations for Stitches RSC.
+Guide creation of properly structured and typed theme configurations for Seams.
 
 ## Theme Structure Overview
 
-A Stitches theme consists of design tokens organized by scale:
+A Seams theme consists of design tokens organized by scale:
 
 ```typescript
-import { createStitches } from "@stitches-rsc/react";
+import { createStitches } from "@artmsilva/seams-react";
 
 const { styled, css, theme, createTheme } = createStitches({
   theme: {
@@ -301,7 +301,7 @@ const darkTheme = createTheme('dark', {
 
 ```typescript
 // stitches.config.ts
-import { createStitches } from "@stitches-rsc/react";
+import { createStitches } from "@artmsilva/seams-react";
 
 export const { styled, css, globalCss, keyframes, theme, createTheme, getCssText } = createStitches(
   {

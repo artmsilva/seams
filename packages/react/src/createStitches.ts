@@ -1,19 +1,22 @@
-import { createStitches as createStitchesCore } from "@stitches-rsc/core";
-import type { CreateStitchesConfig, Stitches as StitchesCore } from "@stitches-rsc/core";
+import { createStitches as createStitchesCore } from "@artmsilva/seams-core";
+import type { CreateStitchesConfig, Seams as SeamsCore } from "@artmsilva/seams-core";
 
 import { createStyledFunction } from "./features/styled.js";
 import type { StyledFn } from "./features/styled.js";
 
 /**
- * Extended Stitches instance with React-specific features.
+ * Extended Seams instance with React-specific features.
  */
-export interface Stitches extends StitchesCore {
+export interface Seams extends SeamsCore {
   /** Create styled React components */
   styled: StyledFn;
 }
 
+/** @deprecated Use `Seams` instead */
+export type Stitches = Seams;
+
 /**
- * Creates a new Stitches instance with React support.
+ * Creates a new Seams instance with React support.
  *
  * @example
  * ```tsx
@@ -41,8 +44,8 @@ export interface Stitches extends StitchesCore {
  * <Button size="lg">Click me</Button>
  * ```
  */
-export const createStitches = (init?: CreateStitchesConfig): Stitches => {
-  const instance = createStitchesCore(init) as Stitches;
+export const createStitches = (init?: CreateStitchesConfig): Seams => {
+  const instance = createStitchesCore(init) as Seams;
 
   instance.styled = createStyledFunction(instance);
 

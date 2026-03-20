@@ -3,7 +3,7 @@ import { describe, it, expect, beforeEach } from "vite-plus/test";
 import { createStitches } from "./createStitches.js";
 
 describe("createStitches", () => {
-  it("creates a Stitches instance", () => {
+  it("creates a Seams instance", () => {
     const stitches = createStitches();
 
     expect(stitches).toBeDefined();

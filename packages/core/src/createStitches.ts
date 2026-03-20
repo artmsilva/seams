@@ -12,19 +12,19 @@ import type { Sheet } from "./sheet.js";
 import type {
   CreateStitchesConfig,
   MediaConfig,
-  StitchesConfig,
+  SeamsConfig,
   ThemeConfig,
   ThemeMapConfig,
   UtilsConfig,
 } from "./types/css.js";
 import { createMemo } from "./utility/createMemo.js";
 
-const createCssMap = createMemo<Stitches, []>();
+const createCssMap = createMemo<Seams, []>();
 
 /**
- * The main Stitches instance interface.
+ * The main Seams instance interface.
  */
-export interface Stitches {
+export interface Seams {
   /** Create styled component classes */
   css: CssFn;
   /** Create global CSS styles */
@@ -40,7 +40,7 @@ export interface Stitches {
   /** The internal stylesheet */
   sheet: Sheet;
   /** The resolved configuration */
-  config: StitchesConfig;
+  config: SeamsConfig;
   /** The CSS class prefix */
   prefix: string;
   /** Get all generated CSS as a string */
@@ -50,7 +50,7 @@ export interface Stitches {
 }
 
 /**
- * Creates a new Stitches instance with the given configuration.
+ * Creates a new Seams instance with the given configuration.
  *
  * @example
  * ```ts
@@ -79,7 +79,7 @@ export interface Stitches {
  * });
  * ```
  */
-export const createStitches = (initConfig?: CreateStitchesConfig): Stitches => {
+export const createStitches = (initConfig?: CreateStitchesConfig): Seams => {
   let didRun = false;
 
   const instance = createCssMap(initConfig, (rawConfig) => {
@@ -99,7 +99,7 @@ export const createStitches = (initConfig?: CreateStitchesConfig): Stitches => {
     const utils: UtilsConfig = typeof config.utils === "object" && config.utils ? config.utils : {};
 
     /** External configuration. */
-    const resolvedConfig: StitchesConfig = {
+    const resolvedConfig: SeamsConfig = {
       prefix,
       media,
       theme,
@@ -110,7 +110,7 @@ export const createStitches = (initConfig?: CreateStitchesConfig): Stitches => {
     /** Internal stylesheet. */
     const sheet = createSheet();
 
-    const returnValue: Stitches = {
+    const returnValue: Seams = {
       css: createCssFunction(resolvedConfig, sheet),
       globalCss: createGlobalCssFunction(resolvedConfig, sheet),
       keyframes: createKeyframesFunction(resolvedConfig, sheet),
