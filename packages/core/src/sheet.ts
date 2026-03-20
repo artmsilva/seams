@@ -38,32 +38,60 @@ export interface Sheet {
   toString: () => string;
 }
 
+/** Whether we're in a browser environment with DOM access. */
+const isBrowser = typeof document !== "undefined" && typeof document.createElement === "function";
+
+/**
+ * Gets or creates the <style> element for a given rule group.
+ * Each group gets its own <style> tag with a data attribute for identification.
+ */
+const getStyleElement = (name: RuleGroupName): HTMLStyleElement | null => {
+  if (!isBrowser) return null;
+
+  const id = `seams-${name}`;
+  let el = document.querySelector<HTMLStyleElement>(`style[data-seams="${name}"]`);
+  if (!el) {
+    el = document.createElement("style");
+    el.setAttribute("data-seams", name);
+    el.id = id;
+    document.head.appendChild(el);
+  }
+  return el;
+};
+
 /**
  * Creates a rule group for collecting CSS.
+ * In browser environments, rules are also injected into the DOM.
  */
-const createRuleGroup = (): RuleGroup => {
+const createRuleGroup = (name: RuleGroupName): RuleGroup => {
   const rules: string[] = [];
   const cache = new Set<string>();
+  const styleEl = getStyleElement(name);
 
   return {
     cache,
     rules,
     apply(cssText: string) {
       rules.push(cssText);
+      // Inject into DOM in browser environments
+      if (styleEl) {
+        styleEl.textContent = rules.join("");
+      }
     },
   };
 };
 
 /**
  * Creates a sheet for collecting CSS rules.
- * This is a zero-runtime implementation that collects CSS rather than injecting into DOM.
+ * In browser environments, CSS is injected into the DOM via <style> tags.
+ * In server environments, CSS is collected in memory for getCssText()/toString().
  */
 export const createSheet = (): Sheet => {
   const rules = {} as Record<RuleGroupName, RuleGroup>;
 
   const reset = () => {
     for (const name of ruleGroupNames) {
-      rules[name] = createRuleGroup();
+      rules[name] = createRuleGroup(name);
     }
   };
 
