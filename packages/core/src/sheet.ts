@@ -55,15 +55,25 @@ export interface Sheet {
 /** Whether we're in a browser environment with DOM access. */
 const isBrowser = typeof document !== "undefined" && typeof document.createElement === "function";
 
+/**
+ * Whether React 19 style hoisting is active.
+ * When styled() co-renders <style href precedence>, React handles CSS in <head>.
+ * In that case, runtime DOM injection is redundant and should be skipped.
+ */
+const hasReactStyleHoisting = (): boolean => {
+  if (!isBrowser) return false;
+  return document.querySelector('style[data-precedence^="seams-"]') !== null;
+};
+
 /** Whether the @layer order declaration has been injected. */
 let layerOrderInjected = false;
 
 /**
  * Injects the @layer order declaration into the document head.
- * This must come before any layer content to establish cascade order.
+ * Skipped when React 19 style hoisting is active (it handles layer order).
  */
 const injectLayerOrder = (): void => {
-  if (!isBrowser || layerOrderInjected) return;
+  if (!isBrowser || layerOrderInjected || hasReactStyleHoisting()) return;
   layerOrderInjected = true;
 
   const el = document.createElement("style");
@@ -71,7 +81,6 @@ const injectLayerOrder = (): void => {
   el.setAttribute("data-seams", "layers");
   const layerNames = ruleGroupNames.map((n) => `${LAYER_PREFIX}.${n}`).join(", ");
   el.textContent = `@layer ${layerNames};`;
-  // Insert as the first style element to ensure order
   const firstStyle = document.head.querySelector("style");
   if (firstStyle) {
     document.head.insertBefore(el, firstStyle);
@@ -82,10 +91,10 @@ const injectLayerOrder = (): void => {
 
 /**
  * Gets or creates the <style> element for a given rule group.
- * Each group gets its own <style> tag with a data attribute for identification.
+ * Returns null when React 19 style hoisting is active (CSS is already in <head>).
  */
 const getStyleElement = (name: RuleGroupName): HTMLStyleElement | null => {
-  if (!isBrowser) return null;
+  if (!isBrowser || hasReactStyleHoisting()) return null;
 
   // Ensure layer order is declared first
   injectLayerOrder();
