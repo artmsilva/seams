@@ -34,7 +34,7 @@ export const generateCss = (
   extraction: ExtractionResult,
   options: CssGeneratorOptions = {},
 ): string => {
-  const { useScope = true, useLayers = true, minify = false, layerPrefix = "stitches" } = options;
+  const { useScope = true, useLayers = true, minify = false, layerPrefix = "seams" } = options;
 
   const parts: string[] = [];
   const nl = minify ? "" : "\n";
@@ -161,7 +161,7 @@ export const generateScopeFallback = (
   extraction: ExtractionResult,
   options: CssGeneratorOptions = {},
 ): string => {
-  const { useLayers = true, minify = false, layerPrefix = "stitches" } = options;
+  const { useLayers = true, minify = false, layerPrefix = "seams" } = options;
   const nl = minify ? "" : "\n";
   const indent = minify ? "" : "  ";
 

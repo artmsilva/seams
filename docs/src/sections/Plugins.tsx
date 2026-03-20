@@ -66,7 +66,7 @@ const pluginOptions = `seams({
   minify: true,
 
   // Custom layer prefix
-  layerPrefix: "stitches",
+  layerPrefix: "seams",
 })`;
 
 export function Plugins() {
@@ -108,13 +108,13 @@ export function Plugins() {
         deterministic cascade order. This eliminates specificity issues and ensures styles are
         applied predictably regardless of import order.
       </Paragraph>
-      <CodeBlock label="layer order">{`@layer stitches.themed,    /* Theme CSS variables */
-       stitches.global,    /* globalCss() styles */
-       stitches.styled,    /* Base component styles */
-       stitches.onevar,    /* Single variant styles */
-       stitches.resonevar, /* Responsive variant styles */
-       stitches.allvar,    /* Compound variant styles */
-       stitches.inline;    /* css prop styles */`}</CodeBlock>
+      <CodeBlock label="layer order">{`@layer seams.themed,    /* Theme CSS variables */
+       seams.global,    /* globalCss() styles */
+       seams.styled,    /* Base component styles */
+       seams.onevar,    /* Single variant styles */
+       seams.resonevar, /* Responsive variant styles */
+       seams.allvar,    /* Compound variant styles */
+       seams.inline;    /* css prop styles */`}</CodeBlock>
     </Section>
   );
 }

@@ -95,6 +95,7 @@ const navSections: NavSection[] = [
     items: [
       { label: "Theming", href: "#theming" },
       { label: "Build Plugins", href: "#plugins" },
+      { label: "Lit Integration", href: "#lit-integration" },
     ],
   },
   {

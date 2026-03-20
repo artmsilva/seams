@@ -104,13 +104,13 @@ Both plugins use `processSource` from plugin-common:
 ### CSS Layer Order
 
 ```css
-@layer stitches.themed,    /* Theme CSS variables */
-       stitches.global,    /* globalCss() styles */
-       stitches.styled,    /* Base component styles */
-       stitches.onevar,    /* Single variant styles */
-       stitches.resonevar, /* Responsive variant styles */
-       stitches.allvar,    /* Compound variant styles */
-       stitches.inline; /* css prop styles */
+@layer seams.themed,    /* Theme CSS variables */
+       seams.global,    /* globalCss() styles */
+       seams.styled,    /* Base component styles */
+       seams.onevar,    /* Single variant styles */
+       seams.resonevar, /* Responsive variant styles */
+       seams.allvar,    /* Compound variant styles */
+       seams.inline; /* css prop styles */
 ```
 
 ### Token Transformation
@@ -126,10 +126,10 @@ Dynamic values are converted to CSS variables at build time:
 <Box css={{ margin: dynamicVal }} />
 
 // Output CSS
-.c-Box-inline-xyz { margin: var(--stitches-dyn-0); }
+.c-Box-inline-xyz { margin: var(--seams-dyn-0); }
 
 // Output JS
-<Box className="c-Box-inline-xyz" style={{ '--stitches-dyn-0': dynamicVal }} />
+<Box className="c-Box-inline-xyz" style={{ '--seams-dyn-0': dynamicVal }} />
 ```
 
 ## TypeScript Notes

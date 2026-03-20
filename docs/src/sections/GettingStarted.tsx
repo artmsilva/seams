@@ -7,6 +7,8 @@ const installVite = `npm install -D @artmsilva/seams-vite-plugin`;
 
 const installNext = `npm install @artmsilva/seams-next-plugin`;
 
+const installLit = `npm install @artmsilva/seams-lit`;
+
 const quickStart = `// seams.config.ts
 import { createStitches } from "@artmsilva/seams-react";
 
@@ -100,6 +102,13 @@ export function GettingStarted() {
         <SubHeading>Next.js plugin</SubHeading>
         <Paragraph>For Next.js projects using the App Router or Pages Router.</Paragraph>
         <CodeBlock label="terminal">{installNext}</CodeBlock>
+
+        <SubHeading>Lit / Web Components</SubHeading>
+        <Paragraph>
+          For Lit and Web Components. Provides Shadow DOM integration via{" "}
+          <InlineCode>adoptedStyleSheets</InlineCode>.
+        </Paragraph>
+        <CodeBlock label="terminal">{installLit}</CodeBlock>
       </Section>
 
       <Section id="quick-start" title="Quick Start">

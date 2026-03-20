@@ -104,7 +104,7 @@ export const processSource = (
     useScope: options.useScope ?? true,
     useLayers: options.useLayers ?? true,
     minify: options.minify ?? false,
-    layerPrefix: options.layerPrefix ?? "stitches",
+    layerPrefix: options.layerPrefix ?? "seams",
   });
 
   return {

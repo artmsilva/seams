@@ -27,8 +27,8 @@ describe("define", () => {
     expect(target[sym]).toEqual({ type: "button" });
   });
 
-  it("preserves Symbol properties from the sxs.internal symbol", () => {
-    const internal = Symbol.for("sxs.internal");
+  it("preserves Symbol properties from the seams.internal symbol", () => {
+    const internal = Symbol.for("seams.internal");
     const render = (() => {}) as Record<string | symbol, unknown>;
     define(render, {
       className: "c-test",

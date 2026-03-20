@@ -92,10 +92,10 @@ Dynamic values are converted to CSS variables:
 <Box css={{ margin: dynamicVal }} />
 
 // Output CSS
-.c-Box-inline-xyz { margin: var(--stitches-dyn-0); }
+.c-Box-inline-xyz { margin: var(--seams-dyn-0); }
 
 // Output JS
-<Box className="c-Box-inline-xyz" style={{ '--stitches-dyn-0': dynamicVal }} />
+<Box className="c-Box-inline-xyz" style={{ '--seams-dyn-0': dynamicVal }} />
 ```
 
 ### CSS Layer Order
@@ -103,13 +103,13 @@ Dynamic values are converted to CSS variables:
 Styles are organized into layers for predictable cascade ordering:
 
 ```css
-@layer stitches.themed,    /* Theme CSS variables */
-       stitches.global,    /* globalCss() styles */
-       stitches.styled,    /* Base component styles */
-       stitches.onevar,    /* Single variant styles */
-       stitches.resonevar, /* Responsive variant styles */
-       stitches.allvar,    /* Compound variant styles */
-       stitches.inline; /* css prop styles */
+@layer seams.themed,    /* Theme CSS variables */
+       seams.global,    /* globalCss() styles */
+       seams.styled,    /* Base component styles */
+       seams.onevar,    /* Single variant styles */
+       seams.resonevar, /* Responsive variant styles */
+       seams.allvar,    /* Compound variant styles */
+       seams.inline; /* css prop styles */
 ```
 
 ## Development

@@ -20,6 +20,9 @@ export const ruleGroupNames = [
 
 export type RuleGroupName = (typeof ruleGroupNames)[number];
 
+/** The prefix used for CSS @layer names. */
+const LAYER_PREFIX = "seams";
+
 /**
  * A rule group that collects CSS rules.
  */
@@ -41,12 +44,40 @@ export interface Sheet {
 /** Whether we're in a browser environment with DOM access. */
 const isBrowser = typeof document !== "undefined" && typeof document.createElement === "function";
 
+/** Whether the @layer order declaration has been injected. */
+let layerOrderInjected = false;
+
+/**
+ * Injects the @layer order declaration into the document head.
+ * This must come before any layer content to establish cascade order.
+ */
+const injectLayerOrder = (): void => {
+  if (!isBrowser || layerOrderInjected) return;
+  layerOrderInjected = true;
+
+  const el = document.createElement("style");
+  el.id = "seams-layers";
+  el.setAttribute("data-seams", "layers");
+  const layerNames = ruleGroupNames.map((n) => `${LAYER_PREFIX}.${n}`).join(", ");
+  el.textContent = `@layer ${layerNames};`;
+  // Insert as the first style element to ensure order
+  const firstStyle = document.head.querySelector("style");
+  if (firstStyle) {
+    document.head.insertBefore(el, firstStyle);
+  } else {
+    document.head.appendChild(el);
+  }
+};
+
 /**
  * Gets or creates the <style> element for a given rule group.
  * Each group gets its own <style> tag with a data attribute for identification.
  */
 const getStyleElement = (name: RuleGroupName): HTMLStyleElement | null => {
   if (!isBrowser) return null;
+
+  // Ensure layer order is declared first
+  injectLayerOrder();
 
   const id = `seams-${name}`;
   let el = document.querySelector<HTMLStyleElement>(`style[data-seams="${name}"]`);
@@ -61,21 +92,22 @@ const getStyleElement = (name: RuleGroupName): HTMLStyleElement | null => {
 
 /**
  * Creates a rule group for collecting CSS.
- * In browser environments, rules are also injected into the DOM.
+ * In browser environments, rules are wrapped in @layer and injected into the DOM.
  */
 const createRuleGroup = (name: RuleGroupName): RuleGroup => {
   const rules: string[] = [];
   const cache = new Set<string>();
   const styleEl = getStyleElement(name);
+  const layerName = `${LAYER_PREFIX}.${name}`;
 
   return {
     cache,
     rules,
     apply(cssText: string) {
       rules.push(cssText);
-      // Inject into DOM in browser environments
+      // Inject into DOM wrapped in @layer
       if (styleEl) {
-        styleEl.textContent = rules.join("");
+        styleEl.textContent = `@layer ${layerName}{${rules.join("")}}`;
       }
     },
   };
@@ -83,7 +115,8 @@ const createRuleGroup = (name: RuleGroupName): RuleGroup => {
 
 /**
  * Creates a sheet for collecting CSS rules.
- * In browser environments, CSS is injected into the DOM via <style> tags.
+ * In browser environments, CSS is injected into the DOM via <style> tags
+ * wrapped in @layer for cascade control.
  * In server environments, CSS is collected in memory for getCssText()/toString().
  */
 export const createSheet = (): Sheet => {
@@ -102,7 +135,9 @@ export const createSheet = (): Sheet => {
       const group = rules[name];
       if (group && group.rules.length > 0) {
         // Add marker for hydration
-        parts.push(`--sxs{--sxs:${ruleGroupNames.indexOf(name)} ${[...group.cache].join(" ")}}`);
+        parts.push(
+          `--seams{--seams:${ruleGroupNames.indexOf(name)} ${[...group.cache].join(" ")}}`,
+        );
         parts.push(`@media{${group.rules.join("")}}`);
       }
     }
@@ -121,7 +156,7 @@ export const createSheet = (): Sheet => {
 
 /**
  * Creates a deferred rules injector for React component composition.
- * When a stitches component extends another React component,
+ * When a Seams component extends another React component,
  * this ensures wrapper styles are injected after the wrapped component.
  */
 export const createRulesInjectionDeferrer = (

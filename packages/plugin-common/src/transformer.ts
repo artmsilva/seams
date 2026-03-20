@@ -159,7 +159,7 @@ const transformCssProp = (
     // Check if the value is dynamic
     if (isDynamicValue(prop.value)) {
       // Generate a CSS variable name
-      const varName = `--stitches-dyn-${dynamicVarCounter++}`;
+      const varName = `--seams-dyn-${dynamicVarCounter++}`;
 
       // Add to style prop for runtime injection
       styleProperties.push(t.objectProperty(t.stringLiteral(varName), prop.value as t.Expression));
@@ -226,7 +226,7 @@ const transformDynamicCall = (
     }
 
     if (isDynamicValue(prop.value)) {
-      const varName = `--stitches-dyn-${dynamicVarCounter++}`;
+      const varName = `--seams-dyn-${dynamicVarCounter++}`;
 
       dynamicVariables.push({
         variableName: varName,

@@ -165,7 +165,7 @@ import { getCssText } from "./seams.config";
 // This avoids a flash of unstyled content on first load.
 
 const cssString = getCssText();
-// => "@layer stitches.themed { :root { --colors-primary: ... } } ..."`;
+// => "@layer seams.themed { :root { --colors-primary: ... } } ..."`;
 
 export function ApiReference() {
   return (

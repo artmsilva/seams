@@ -9,6 +9,7 @@ import { GettingStarted } from "./sections/GettingStarted";
 import { ApiReference } from "./sections/ApiReference";
 import { Theming } from "./sections/Theming";
 import { Plugins } from "./sections/Plugins";
+import { LitIntegration } from "./sections/LitIntegration";
 import { Examples } from "./sections/Examples";
 
 applyGlobalStyles();
@@ -27,6 +28,7 @@ const sectionIds = [
   "api-get-css-text",
   "theming",
   "plugins",
+  "lit-integration",
   "examples",
 ];
 
@@ -75,6 +77,7 @@ export default function App() {
         <ApiReference />
         <Theming />
         <Plugins />
+        <LitIntegration />
         <Examples />
       </Layout>
     </div>
