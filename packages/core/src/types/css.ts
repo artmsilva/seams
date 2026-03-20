@@ -45,15 +45,18 @@ export type ThemeMapConfig = Record<string, ThemeScale | string>;
 export type UtilsConfig = Record<string, (value: unknown) => CSSObject>;
 
 /**
- * Internal Stitches configuration.
+ * Internal Seams configuration.
  */
-export interface StitchesConfig {
+export interface SeamsConfig {
   prefix: string;
   media: MediaConfig;
   theme: ThemeConfig;
   themeMap: ThemeMapConfig;
   utils: UtilsConfig;
 }
+
+/** @deprecated Use `SeamsConfig` instead */
+export type StitchesConfig = SeamsConfig;
 
 /**
  * User-provided configuration for createStitches.

@@ -1,14 +1,14 @@
 import React from "react";
 
-import { createCssFunction, createMemo, internal } from "@stitches-rsc/core";
+import { createCssFunction, createMemo, internal } from "@artmsilva/seams-core";
 import type {
   ComponentConfig,
   CssComponent,
   CssFn,
+  SeamsConfig,
   Sheet,
-  StitchesConfig,
   StyleConfig,
-} from "@stitches-rsc/core";
+} from "@artmsilva/seams-core";
 
 const createStyledFunctionMap = createMemo<StyledFn, []>();
 
@@ -56,7 +56,7 @@ export interface StyledComponent<
  * Configuration for the styled function.
  */
 export interface StyledConfig {
-  config: StitchesConfig;
+  config: SeamsConfig;
   sheet: Sheet;
 }
 

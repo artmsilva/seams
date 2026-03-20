@@ -1,5 +1,5 @@
 /**
- * Utility types for Stitches RSC.
+ * Utility types for Seams.
  */
 
 /** Returns a string with the given prefix followed by the given values. */

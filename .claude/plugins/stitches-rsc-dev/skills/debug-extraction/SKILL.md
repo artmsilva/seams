@@ -3,7 +3,7 @@ name: debug-extraction
 description: This skill should be used when the user asks to "debug extraction", "why isn't CSS being extracted", "build plugin not working", "styles missing after build", "analyze AST", or needs to troubleshoot the build-time CSS extraction pipeline.
 ---
 
-# Debug Stitches RSC CSS Extraction
+# Debug Seams CSS Extraction
 
 Troubleshoot build-time CSS extraction issues by tracing through the analysis, extraction, transformation, and generation pipeline.
 
@@ -27,9 +27,9 @@ Add debug logging to plugin config:
 
 ```javascript
 // next.config.js
-const withStitchesRSC = require("@stitches-rsc/next-plugin");
+const withSeams = require("@artmsilva/seams-next-plugin");
 
-module.exports = withStitchesRSC({
+module.exports = withSeams({
   // Add files you expect to be processed
   include: ["src", "app", "components"],
   exclude: ["node_modules"],
@@ -45,11 +45,11 @@ module.exports = withStitchesRSC({
 
 ```typescript
 // vite.config.ts
-import stitchesRSC from "@stitches-rsc/vite-plugin";
+import seams from "@artmsilva/seams-vite-plugin";
 
 export default defineConfig({
   plugins: [
-    stitchesRSC({
+    seams({
       include: ["src"],
       exclude: ["node_modules"],
     }),
@@ -63,9 +63,9 @@ The analyzer looks for these import patterns:
 
 ```typescript
 // ✅ Detected
-import { styled, css } from "@stitches-rsc/react";
-import { createStitches } from "@stitches-rsc/react";
-import * as Stitches from "@stitches-rsc/react";
+import { styled, css } from "@artmsilva/seams-react";
+import { createStitches } from "@artmsilva/seams-react";
+import * as Stitches from "@artmsilva/seams-react";
 
 // ❌ Not detected (would need config)
 import { styled } from "./stitches.config";
@@ -76,15 +76,15 @@ import { css } from "../lib/stitches";
 
 ### Stage 1: Analyzer
 
-The analyzer parses source code and finds Stitches usage.
+The analyzer parses source code and finds Seams usage.
 
 **Debug with:**
 
 ```typescript
-import { analyzeSource } from "@stitches-rsc/plugin-common";
+import { analyzeSource } from "@artmsilva/seams-plugin-common";
 
 const source = `
-import { styled } from '@stitches-rsc/react';
+import { styled } from '@artmsilva/seams-react';
 
 const Button = styled('button', {
   backgroundColor: 'blue',
@@ -93,7 +93,7 @@ const Button = styled('button', {
 
 const analysis = analyzeSource(source, "Button.tsx");
 
-console.log("Has Stitches import:", analysis.hasStitchesImport);
+console.log("Has Seams import:", analysis.hasStitchesImport);
 console.log("Configs found:", analysis.configs.length);
 console.log("Usages found:", analysis.usages.length);
 
@@ -110,7 +110,7 @@ for (const usage of analysis.usages) {
 **Common issues:**
 
 - `hasStitchesImport: false` → Import path not recognized
-- `usages.length === 0` → Stitches calls not detected
+- `usages.length === 0` → Seams calls not detected
 - `hasDynamicValues: true` → Contains non-static values
 
 ### Stage 2: Extractor
@@ -120,7 +120,7 @@ The extractor converts static usages to CSS rules.
 **Debug with:**
 
 ```typescript
-import { analyzeSource, extractCss } from "@stitches-rsc/plugin-common";
+import { analyzeSource, extractCss } from "@artmsilva/seams-plugin-common";
 
 const analysis = analyzeSource(source, "Button.tsx");
 const extraction = extractCss(analysis, {
@@ -157,7 +157,7 @@ The transformer converts dynamic values to CSS variables.
 **Debug with:**
 
 ```typescript
-import { analyzeSource, extractCss, transformSource } from "@stitches-rsc/plugin-common";
+import { analyzeSource, extractCss, transformSource } from "@artmsilva/seams-plugin-common";
 
 const analysis = analyzeSource(source, "Button.tsx");
 const extraction = extractCss(analysis, {});
@@ -190,7 +190,7 @@ The generator produces final CSS with layers and scope.
 **Debug with:**
 
 ```typescript
-import { generateFullCss } from "@stitches-rsc/plugin-common";
+import { generateFullCss } from "@artmsilva/seams-plugin-common";
 
 const css = generateFullCss(extraction, {
   useScope: true,
@@ -219,7 +219,7 @@ import {
   extractCss,
   transformSource,
   generateFullCss,
-} from "@stitches-rsc/plugin-common";
+} from "@artmsilva/seams-plugin-common";
 
 const filename = process.argv[2];
 if (!filename) {
@@ -268,13 +268,13 @@ npx tsx debug-extraction.ts src/components/Button.tsx
 
 ## Common Problems and Solutions
 
-### Problem: "No Stitches import detected"
+### Problem: "No Seams import detected"
 
 **Cause:** Import path doesn't match expected patterns
 **Solution:** Use standard import paths:
 
 ```typescript
-import { styled } from "@stitches-rsc/react";
+import { styled } from "@artmsilva/seams-react";
 ```
 
 ### Problem: "Usage has dynamic values, skipping extraction"

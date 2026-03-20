@@ -42,6 +42,8 @@ export type {
   CreateThemeFunctionType,
   GlobalCssFunctionType,
   KeyframesFunctionType,
+  SeamsConfigType,
+  SeamsCSS,
   StitchesConfigType,
   StitchesCSS,
   StyleDefinition,

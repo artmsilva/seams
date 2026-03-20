@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Stitches RSC is a zero-runtime replacement for Stitches.js that supports React Server Components through build-time CSS extraction. It provides 1:1 API compatibility with the original Stitches while using CSS `@layer` for cascade control and `@scope` for component isolation.
+Seams is a zero-runtime CSS-in-JS library for React Server Components, inspired by Stitches.js. It provides 1:1 API compatibility with the original Stitches while using build-time CSS extraction, CSS `@layer` for cascade control, and `@scope` for component isolation.
 
 ## Commands
 
@@ -56,12 +56,12 @@ packages/
 ### Package Dependencies
 
 ```
-core ← react
-core ← plugin-common ← next-plugin
-                     ← vite-plugin
+core <- react
+core <- plugin-common <- next-plugin
+                      <- vite-plugin
 ```
 
-### Core Package (`@stitches-rsc/core`)
+### Core Package (`@artmsilva/seams-core`)
 
 The isomorphic core with no React dependency:
 
@@ -70,22 +70,22 @@ The isomorphic core with no React dependency:
 - **`convert/`** - CSS conversion utilities:
   - `toHash.ts` - DJB2 hash for deterministic class names
   - `toCssRules.ts` - Style objects to CSS strings
-  - `toTokenizedValue.ts` - `$token` → `var(--prefix-scale-token)` transform
+  - `toTokenizedValue.ts` - `$token` -> `var(--prefix-scale-token)` transform
 - **`sheet.ts`** - CSS rule collection organized by layer groups
 - **`default/defaultThemeMap.ts`** - Maps CSS properties to theme scales
 
-### React Package (`@stitches-rsc/react`)
+### React Package (`@artmsilva/seams-react`)
 
 Extends core with React-specific `styled()` function:
 
-- Re-exports everything from `@stitches-rsc/core`
+- Re-exports everything from `@artmsilva/seams-core`
 - Adds `styled()` that wraps `css()` with React component creation and `forwardRef`
 
-### Plugin Common (`@stitches-rsc/plugin-common`)
+### Plugin Common (`@artmsilva/seams-plugin-common`)
 
 Build-time CSS extraction pipeline:
 
-1. **`analyzer.ts`** - Babel AST analysis to find Stitches imports and usages
+1. **`analyzer.ts`** - Babel AST analysis to find Seams imports and usages
 2. **`extractor.ts`** - Extracts static CSS from analyzed usages
 3. **`transformer.ts`** - Converts dynamic values to CSS variables
 4. **`cssGenerator.ts`** - Generates final CSS with `@layer` and `@scope`
@@ -96,7 +96,7 @@ Main entry point: `processSource(code, filename, options)` runs the full pipelin
 
 Both plugins use `processSource` from plugin-common:
 
-- **next-plugin**: Webpack loader (`withStitchesRSC()` config wrapper)
+- **next-plugin**: Webpack loader (`withSeams()` config wrapper)
 - **vite-plugin**: Vite transform plugin with virtual CSS module
 
 ## Key Patterns
@@ -115,7 +115,7 @@ Both plugins use `processSource` from plugin-common:
 
 ### Token Transformation
 
-`$colors$primary` → `var(--prefix-colors-primary)`
+`$colors$primary` -> `var(--prefix-colors-primary)`
 
 ### Dynamic CSS Prop
 

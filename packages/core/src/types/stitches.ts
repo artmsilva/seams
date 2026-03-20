@@ -7,14 +7,14 @@ import type { Token } from "./theme.js";
  * CSS type with media queries and theme tokens.
  * Simplified version for better TypeScript performance.
  */
-export type StitchesCSS<
+export type SeamsCSS<
   Media extends MediaConfig = MediaConfig,
   Theme extends ThemeConfig = ThemeConfig,
   _ThemeMap extends ThemeMapConfig = ThemeMapConfig,
   _Utils extends UtilsConfig = UtilsConfig,
 > = CSS.Properties<string | number> & {
   // Media query nesting
-  [K in `@${string}` | `&${string}`]?: StitchesCSS<Media, Theme>;
+  [K in `@${string}` | `&${string}`]?: SeamsCSS<Media, Theme>;
 } & {
   // Custom properties
   [K in `$${string}`]?: string | number;
@@ -102,9 +102,9 @@ export interface CreateThemeFunctionType<Theme extends ThemeConfig = ThemeConfig
 }
 
 /**
- * Full Stitches configuration type.
+ * Full Seams configuration type.
  */
-export interface StitchesConfigType<
+export interface SeamsConfigType<
   Prefix extends string = "",
   Media extends MediaConfig = MediaConfig,
   Theme extends ThemeConfig = ThemeConfig,
@@ -131,3 +131,20 @@ export interface StitchesConfigType<
   getCssText: () => string;
   css: CssFunctionType;
 }
+
+// Backward compatibility aliases
+/** @deprecated Use `SeamsCSS` instead */
+export type StitchesCSS<
+  Media extends MediaConfig = MediaConfig,
+  Theme extends ThemeConfig = ThemeConfig,
+  ThemeMap extends ThemeMapConfig = ThemeMapConfig,
+  Utils extends UtilsConfig = UtilsConfig,
+> = SeamsCSS<Media, Theme, ThemeMap, Utils>;
+/** @deprecated Use `SeamsConfigType` instead */
+export type StitchesConfigType<
+  Prefix extends string = "",
+  Media extends MediaConfig = MediaConfig,
+  Theme extends ThemeConfig = ThemeConfig,
+  ThemeMap extends ThemeMapConfig = ThemeMapConfig,
+  Utils extends UtilsConfig = UtilsConfig,
+> = SeamsConfigType<Prefix, Media, Theme, ThemeMap, Utils>;

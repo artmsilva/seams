@@ -70,7 +70,7 @@ export default function App() {
       <Container>
         <Section>
           <Row css={{ justifyContent: "space-between", marginBottom: "$3" }}>
-            <Heading css={{ marginBottom: 0 }}>Stitches RSC + Vite</Heading>
+            <Heading css={{ marginBottom: 0 }}>Seams + Vite</Heading>
             <ThemeToggle isDark={isDark} onToggle={() => setIsDark((prev) => !prev)} />
           </Row>
         </Section>

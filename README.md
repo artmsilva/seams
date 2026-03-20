@@ -1,6 +1,6 @@
-# Stitches RSC
+# Seams
 
-Zero-runtime [Stitches.js](https://stitches.dev) replacement for React Server Components.
+Zero-runtime CSS-in-JS for React Server Components, inspired by [Stitches.js](https://stitches.dev).
 
 ## Features
 
@@ -13,23 +13,23 @@ Zero-runtime [Stitches.js](https://stitches.dev) replacement for React Server Co
 ## Installation
 
 ```bash
-pnpm add @stitches-rsc/react
+pnpm add @artmsilva/seams-react
 ```
 
 For framework-specific setup, install the appropriate plugin:
 
 ```bash
 # Next.js
-pnpm add @stitches-rsc/next-plugin
+pnpm add @artmsilva/seams-next-plugin
 
 # Vite
-pnpm add @stitches-rsc/vite-plugin
+pnpm add @artmsilva/seams-vite-plugin
 ```
 
 ## Usage
 
 ```tsx
-import { styled, css } from "@stitches-rsc/react";
+import { styled, css } from "@artmsilva/seams-react";
 
 const Button = styled("button", {
   backgroundColor: "$primary",
@@ -51,16 +51,16 @@ export default function App() {
 
 ## Packages
 
-| Package                     | Description                             |
-| --------------------------- | --------------------------------------- |
-| `@stitches-rsc/core`        | Isomorphic API (no React dependency)    |
-| `@stitches-rsc/react`       | React bindings with `styled()` function |
-| `@stitches-rsc/next-plugin` | Next.js webpack loader                  |
-| `@stitches-rsc/vite-plugin` | Vite transform plugin                   |
+| Package                        | Description                             |
+| ------------------------------ | --------------------------------------- |
+| `@artmsilva/seams-core`        | Isomorphic API (no React dependency)    |
+| `@artmsilva/seams-react`       | React bindings with `styled()` function |
+| `@artmsilva/seams-next-plugin` | Next.js webpack loader                  |
+| `@artmsilva/seams-vite-plugin` | Vite transform plugin                   |
 
 ## How It Works
 
-Stitches RSC extracts CSS at build time instead of generating it at runtime. This enables full React Server Components support.
+Seams extracts CSS at build time instead of generating it at runtime. This enables full React Server Components support.
 
 ### Token Transformation
 

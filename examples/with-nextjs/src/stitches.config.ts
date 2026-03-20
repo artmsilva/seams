@@ -1,4 +1,4 @@
-import { createStitches } from "@stitches-rsc/react";
+import { createStitches } from "@artmsilva/seams-react";
 
 export const { styled, css, globalCss, keyframes, createTheme, theme, getCssText } = createStitches(
   {

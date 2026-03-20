@@ -1,4 +1,4 @@
-# API Differences: Stitches.js vs Stitches RSC
+# API Differences: Stitches.js vs Seams
 
 ## Fully Compatible APIs
 
@@ -27,7 +27,7 @@ These APIs work identically:
 
 ### CSS Generation Timing
 
-| Aspect             | Stitches.js            | Stitches RSC    |
+| Aspect             | Stitches.js            | Seams           |
 | ------------------ | ---------------------- | --------------- |
 | When CSS generated | Runtime (browser)      | Build time      |
 | CSS injection      | Dynamic `<style>` tags | Static CSS file |
@@ -36,7 +36,7 @@ These APIs work identically:
 
 ### getCssText()
 
-| Aspect           | Stitches.js        | Stitches RSC           |
+| Aspect           | Stitches.js        | Seams                  |
 | ---------------- | ------------------ | ---------------------- |
 | Purpose          | SSR CSS extraction | Debugging/fallback     |
 | Required for SSR | Yes                | No (plugin handles it) |
@@ -50,7 +50,7 @@ These APIs work identically:
 <Box css={{ margin: computedValue }} /> // Works, CSS generated in browser
 ```
 
-**Stitches RSC:** Converts to CSS variable at build time
+**Seams:** Converts to CSS variable at build time
 
 ```tsx
 <Box css={{ margin: computedValue }} />
@@ -69,7 +69,7 @@ const Box = styled("div", {
 });
 ```
 
-**Stitches RSC:** Functions not supported (can't serialize at build time)
+**Seams:** Functions not supported (can't serialize at build time)
 
 ```tsx
 // Won't work - use CSS variables instead
@@ -78,7 +78,7 @@ const Box = styled("div", {
 });
 ```
 
-## New Features in Stitches RSC
+## New Features in Seams
 
 ### CSS Layers
 
@@ -123,7 +123,7 @@ With Firefox fallback:
 Identical usage:
 
 ```typescript
-import type { VariantProps } from "@stitches-rsc/react";
+import type { VariantProps } from "@artmsilva/seams-react";
 
 type ButtonVariants = VariantProps<typeof Button>;
 ```
@@ -133,7 +133,7 @@ type ButtonVariants = VariantProps<typeof Button>;
 Identical usage:
 
 ```typescript
-import type { CSS } from "@stitches-rsc/react";
+import type { CSS } from "@artmsilva/seams-react";
 
 interface Props {
   css?: CSS;
@@ -142,8 +142,8 @@ interface Props {
 
 ## Migration Checklist
 
-- [ ] Replace `@stitches/react` with `@stitches-rsc/react`
-- [ ] Replace `@stitches/core` with `@stitches-rsc/core`
+- [ ] Replace `@stitches/react` with `@artmsilva/seams-react`
+- [ ] Replace `@stitches/core` with `@artmsilva/seams-core`
 - [ ] Add appropriate build plugin (Next.js or Vite)
 - [ ] Remove `getCssText()` from SSR if using build plugin
 - [ ] Replace function values with CSS variables

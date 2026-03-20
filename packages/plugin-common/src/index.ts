@@ -15,11 +15,11 @@ export { generateCss, generateScopeFallback, generateFullCss } from "./cssGenera
 export type { CssGeneratorOptions } from "./cssGenerator.js";
 
 /**
- * Main processing pipeline for Stitches RSC.
+ * Main processing pipeline for Seams.
  *
  * @example
  * ```ts
- * import { processSource } from '@stitches-rsc/plugin-common';
+ * import { processSource } from '@artmsilva/seams-plugin-common';
  *
  * const result = processSource(sourceCode, 'component.tsx', {
  *   useScope: true,
@@ -44,7 +44,7 @@ export interface ProcessResult {
     expression: string;
     className: string;
   }>;
-  /** Whether the file contains Stitches usage */
+  /** Whether the file contains Seams usage */
   hasStitches: boolean;
 }
 
@@ -57,7 +57,7 @@ export interface ProcessOptions {
   minify?: boolean;
   /** Custom layer prefix */
   layerPrefix?: string;
-  /** Stitches configuration */
+  /** Seams configuration */
   config?: {
     prefix?: string;
     theme?: Record<string, Record<string, string | number>>;
@@ -71,14 +71,14 @@ import { transformSource } from "./transformer.js";
 import { generateFullCss } from "./cssGenerator.js";
 
 /**
- * Process a source file through the complete Stitches RSC pipeline.
+ * Process a source file through the complete Seams pipeline.
  */
 export const processSource = (
   source: string,
   filename: string,
   options: ProcessOptions = {},
 ): ProcessResult => {
-  // Step 1: Analyze the source for Stitches usage
+  // Step 1: Analyze the source for Seams usage
   const analysis = analyzeSource(source, filename);
 
   if (!analysis.hasStitchesImport || analysis.usages.length === 0) {

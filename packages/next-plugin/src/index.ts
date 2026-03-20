@@ -1,12 +1,12 @@
 import type { NextConfig } from "next";
 import path from "path";
 
-import type { ProcessOptions } from "@stitches-rsc/plugin-common";
+import type { ProcessOptions } from "@artmsilva/seams-plugin-common";
 
 /**
- * Options for the Stitches RSC Next.js plugin.
+ * Options for the Seams Next.js plugin.
  */
-export interface StitchesNextPluginOptions extends ProcessOptions {
+export interface SeamsNextPluginOptions extends ProcessOptions {
   /** File extensions to process */
   extensions?: string[];
   /** Directories to include (default: ['app', 'components', 'src']) */
@@ -16,14 +16,14 @@ export interface StitchesNextPluginOptions extends ProcessOptions {
 }
 
 /**
- * Creates a Next.js plugin for Stitches RSC.
+ * Creates a Next.js plugin for Seams.
  *
  * @example
  * ```js
  * // next.config.js
- * const withStitchesRSC = require('@stitches-rsc/next-plugin');
+ * const { withSeams } = require('@artmsilva/seams-next-plugin');
  *
- * module.exports = withStitchesRSC({
+ * module.exports = withSeams({
  *   useScope: true,
  *   useLayers: true,
  * })({
@@ -31,7 +31,7 @@ export interface StitchesNextPluginOptions extends ProcessOptions {
  * });
  * ```
  */
-export const withStitchesRSC = (pluginOptions: StitchesNextPluginOptions = {}) => {
+export const withSeams = (pluginOptions: SeamsNextPluginOptions = {}) => {
   const {
     extensions = [".tsx", ".ts", ".jsx", ".js"],
     include = ["app", "components", "src", "pages"],
@@ -78,7 +78,13 @@ export const withStitchesRSC = (pluginOptions: StitchesNextPluginOptions = {}) =
 };
 
 // Default export for CommonJS compatibility
-export default withStitchesRSC;
+export default withSeams;
+
+// Backward compatibility aliases
+/** @deprecated Use `SeamsNextPluginOptions` instead */
+export type StitchesNextPluginOptions = SeamsNextPluginOptions;
+/** @deprecated Use `withSeams` instead */
+export const withStitchesRSC = withSeams;
 
 // Re-export types from plugin-common
-export type { ProcessOptions, ProcessResult } from "@stitches-rsc/plugin-common";
+export type { ProcessOptions, ProcessResult } from "@artmsilva/seams-plugin-common";

@@ -1,4 +1,4 @@
-# Contributing to Stitches RSC
+# Contributing to Seams
 
 Thank you for your interest in contributing!
 
@@ -7,8 +7,8 @@ Thank you for your interest in contributing!
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/artmsilva/stitches-rsc.git
-   cd stitches-rsc
+   git clone https://github.com/artmsilva/seams.git
+   cd seams
    ```
 
 2. Install [Vite+](https://viteplus.dev/) (the unified toolchain):
@@ -77,4 +77,4 @@ packages/
 
 ## Questions?
 
-Open a [discussion](https://github.com/artmsilva/stitches-rsc/discussions) for questions or ideas.
+Open a [discussion](https://github.com/artmsilva/seams/discussions) for questions or ideas.

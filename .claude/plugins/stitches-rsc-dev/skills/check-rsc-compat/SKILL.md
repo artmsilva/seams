@@ -5,7 +5,7 @@ description: This skill should be used when the user asks to "check RSC compatib
 
 # Check RSC Compatibility
 
-Verify that Stitches RSC components are compatible with React Server Components by checking for runtime CSS generation, client-side hooks, and other incompatible patterns.
+Verify that Seams components are compatible with React Server Components by checking for runtime CSS generation, client-side hooks, and other incompatible patterns.
 
 ## RSC Compatibility Requirements
 
@@ -24,7 +24,7 @@ Run this script to audit a file:
 
 ```typescript
 // check-rsc.ts
-import { analyzeSource } from "@stitches-rsc/plugin-common";
+import { analyzeSource } from "@artmsilva/seams-plugin-common";
 import { readFileSync } from "fs";
 
 const filename = process.argv[2];
@@ -32,11 +32,11 @@ const source = readFileSync(filename, "utf-8");
 
 const issues: string[] = [];
 
-// Check 1: Stitches analysis
+// Check 1: Seams analysis
 const analysis = analyzeSource(source, filename);
 
 if (analysis.hasStitchesImport) {
-  console.log("✓ Has Stitches import");
+  console.log("✓ Has Seams import");
 
   for (const usage of analysis.usages) {
     if (usage.hasDynamicValues) {
@@ -242,7 +242,7 @@ components/
 **Button.tsx (Server):**
 
 ```typescript
-import { styled } from "@stitches-rsc/react";
+import { styled } from "@artmsilva/seams-react";
 
 export const ButtonBase = styled("button", {
   backgroundColor: "$primary",

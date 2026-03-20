@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { applyGlobalStyles } from "@/globalStyles";
 
 export const metadata: Metadata = {
-  title: "Stitches RSC - Next.js Example",
-  description: "Stitches RSC API showcase with Next.js App Router",
+  title: "Seams - Next.js Example",
+  description: "Seams API showcase with Next.js App Router",
 };
 
 applyGlobalStyles();

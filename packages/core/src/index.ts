@@ -1,6 +1,8 @@
 // Main API
 export { createStitches } from "./createStitches.js";
-export type { Stitches } from "./createStitches.js";
+export type { Seams } from "./createStitches.js";
+/** @deprecated Use `Seams` instead */
+export type { Seams as Stitches } from "./createStitches.js";
 
 // Features
 export {
@@ -42,6 +44,7 @@ export type {
   CSSValue,
   CreateStitchesConfig,
   MediaConfig,
+  SeamsConfig,
   StitchesConfig,
   ThemeConfig,
   ThemeMapConfig,
@@ -75,11 +78,13 @@ export type {
   StyledComponentType,
   TransformProps,
   VariantProps,
-  // Stitches types
+  // Seams types
   CssFunctionType,
   CreateThemeFunctionType,
   GlobalCssFunctionType,
   KeyframesFunctionType,
+  SeamsConfigType,
+  SeamsCSS,
   StitchesConfigType,
   StitchesCSS,
   StyleDefinition,

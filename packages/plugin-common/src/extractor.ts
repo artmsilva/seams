@@ -1,5 +1,5 @@
-import { createStitches, toHash, toTailDashed, toCssRules } from "@stitches-rsc/core";
-import type { CSSObject, ThemeConfig } from "@stitches-rsc/core";
+import { createStitches, toHash, toTailDashed, toCssRules } from "@artmsilva/seams-core";
+import type { CSSObject, ThemeConfig } from "@artmsilva/seams-core";
 
 import type { AnalysisResult, StitchesUsage } from "./analyzer.js";
 

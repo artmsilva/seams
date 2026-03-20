@@ -1,18 +1,19 @@
 {
-  "name": "@stitches-rsc/plugin-common",
+  "name": "@artmsilva/seams-plugin-common",
   "version": "0.1.0",
-  "description": "Shared build plugin logic for Stitches RSC",
+  "description": "Shared build plugin logic for Seams",
   "keywords": [
     "build-plugin",
     "css-extraction",
     "css-in-js",
     "rsc",
+    "seams",
     "stitches"
   ],
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/stitches-rsc/stitches-rsc.git",
+    "url": "https://github.com/artmsilva/seams.git",
     "directory": "packages/plugin-common"
   },
   "files": [
@@ -42,12 +43,12 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@artmsilva/seams-core": "workspace:*",
     "@babel/core": "catalog:",
     "@babel/generator": "catalog:",
     "@babel/parser": "catalog:",
     "@babel/traverse": "catalog:",
-    "@babel/types": "catalog:",
-    "@stitches-rsc/core": "workspace:*"
+    "@babel/types": "catalog:"
   },
   "devDependencies": {
     "@types/babel__core": "catalog:",

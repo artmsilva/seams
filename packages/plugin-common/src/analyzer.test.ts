@@ -3,9 +3,9 @@ import { describe, it, expect } from "vite-plus/test";
 import { analyzeSource } from "./analyzer.js";
 
 describe("analyzeSource", () => {
-  it("detects Stitches imports", () => {
+  it("detects Seams imports", () => {
     const source = `
-      import { styled, css } from '@stitches-rsc/react';
+      import { styled, css } from '@artmsilva/seams-react';
 
       const Button = styled('button', {
         backgroundColor: 'blue',
@@ -19,7 +19,7 @@ describe("analyzeSource", () => {
 
   it("detects createStitches usage", () => {
     const source = `
-      import { createStitches } from '@stitches-rsc/react';
+      import { createStitches } from '@artmsilva/seams-react';
 
       const { styled, css } = createStitches({
         theme: {
@@ -40,7 +40,7 @@ describe("analyzeSource", () => {
 
   it("detects css() usages", () => {
     const source = `
-      import { css } from '@stitches-rsc/core';
+      import { css } from '@artmsilva/seams-core';
 
       const button = css({
         backgroundColor: 'blue',
@@ -58,7 +58,7 @@ describe("analyzeSource", () => {
 
   it("detects styled() usages", () => {
     const source = `
-      import { styled } from '@stitches-rsc/react';
+      import { styled } from '@artmsilva/seams-react';
 
       const Button = styled('button', {
         backgroundColor: 'blue',
@@ -74,7 +74,7 @@ describe("analyzeSource", () => {
 
   it("detects globalCss() usages", () => {
     const source = `
-      import { globalCss } from '@stitches-rsc/core';
+      import { globalCss } from '@artmsilva/seams-core';
 
       const globalStyles = globalCss({
         '*': { margin: 0 },
@@ -89,7 +89,7 @@ describe("analyzeSource", () => {
 
   it("detects keyframes() usages", () => {
     const source = `
-      import { keyframes } from '@stitches-rsc/core';
+      import { keyframes } from '@artmsilva/seams-core';
 
       const fadeIn = keyframes({
         '0%': { opacity: 0 },
@@ -106,7 +106,7 @@ describe("analyzeSource", () => {
 
   it("detects dynamic values", () => {
     const source = `
-      import { css } from '@stitches-rsc/core';
+      import { css } from '@artmsilva/seams-core';
 
       const dynamicColor = 'blue';
 
@@ -123,7 +123,7 @@ describe("analyzeSource", () => {
 
   it("extracts static styles", () => {
     const source = `
-      import { css } from '@stitches-rsc/core';
+      import { css } from '@artmsilva/seams-core';
 
       const button = css({
         backgroundColor: 'blue',
@@ -161,7 +161,7 @@ describe("analyzeSource", () => {
 
   it("handles TypeScript files", () => {
     const source = `
-      import { styled } from '@stitches-rsc/react';
+      import { styled } from '@artmsilva/seams-react';
       import type { ComponentProps } from 'react';
 
       const Button = styled('button', {
