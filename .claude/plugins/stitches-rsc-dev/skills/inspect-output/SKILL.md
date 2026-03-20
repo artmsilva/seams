@@ -19,7 +19,7 @@ To inspect the CSS output for a styled component:
 
 ```typescript
 // inspect.ts
-import { createStitches } from '@stitches-rsc/core';
+import { createStitches } from "@stitches-rsc/core";
 
 const { css, getCssText } = createStitches({
   // Your config here
@@ -27,25 +27,26 @@ const { css, getCssText } = createStitches({
 
 // Define the component styles
 const buttonStyles = css({
-  backgroundColor: '$colors$primary',
-  padding: '$space$2',
+  backgroundColor: "$colors$primary",
+  padding: "$space$2",
   variants: {
     size: {
-      sm: { fontSize: '$fontSizes$sm' },
-      lg: { fontSize: '$fontSizes$lg' },
+      sm: { fontSize: "$fontSizes$sm" },
+      lg: { fontSize: "$fontSizes$lg" },
     },
   },
 });
 
 // Trigger CSS generation
-buttonStyles({ size: 'sm' });
-buttonStyles({ size: 'lg' });
+buttonStyles({ size: "sm" });
+buttonStyles({ size: "lg" });
 
 // Output the CSS
 console.log(getCssText());
 ```
 
 Run with:
+
 ```bash
 npx tsx inspect.ts
 ```
@@ -78,7 +79,7 @@ CSS is organized into layers (lowest to highest specificity):
        stitches.onevar,    /* 4. Single variant styles */
        stitches.resonevar, /* 5. Responsive variant styles */
        stitches.allvar,    /* 6. Compound variant styles */
-       stitches.inline;    /* 7. css prop styles */
+       stitches.inline; /* 7. css prop styles */
 ```
 
 ### Theme Layer (`stitches.themed`)
@@ -119,6 +120,7 @@ Base component styles with @scope:
 ### Variant Layers
 
 Single variants (`stitches.onevar`):
+
 ```css
 @layer stitches.onevar {
   @scope (.c-Button-abc123-def456-size-sm) {
@@ -130,6 +132,7 @@ Single variants (`stitches.onevar`):
 ```
 
 Responsive variants (`stitches.resonevar`):
+
 ```css
 @layer stitches.resonevar {
   @scope (.c-Button-abc123-ghi789-size-lg) {
@@ -143,6 +146,7 @@ Responsive variants (`stitches.resonevar`):
 ```
 
 Compound variants (`stitches.allvar`):
+
 ```css
 @layer stitches.allvar {
   @scope (.c-Button-abc123-jkl012-cv) {
@@ -156,6 +160,7 @@ Compound variants (`stitches.allvar`):
 ### Inline Layer (`stitches.inline`)
 
 Styles from `css` prop:
+
 ```css
 @layer stitches.inline {
   @scope (.c-Button-abc123-mno345-css) {
@@ -189,8 +194,9 @@ grep "size-sm" dist/stitches.css
 ```
 
 Check the component is receiving the variant class:
+
 ```tsx
-const result = buttonStyles({ size: 'sm' });
+const result = buttonStyles({ size: "sm" });
 console.log(result.className); // Should include variant class
 ```
 
@@ -203,13 +209,20 @@ grep "colors-primary" dist/stitches.css
 ```
 
 Check token syntax uses `$`:
+
 ```typescript
 // Correct
-{ color: '$colors$primary' }
+{
+  color: "$colors$primary";
+}
 
 // Wrong
-{ color: 'colors.primary' }
-{ color: 'var(--colors-primary)' } // Works but bypasses theme system
+{
+  color: "colors.primary";
+}
+{
+  color: "var(--colors-primary)";
+} // Works but bypasses theme system
 ```
 
 ## Programmatic Inspection
@@ -217,7 +230,7 @@ Check token syntax uses `$`:
 ### Using the Plugin Common API
 
 ```typescript
-import { analyzeSource, extractCss, generateFullCss } from '@stitches-rsc/plugin-common';
+import { analyzeSource, extractCss, generateFullCss } from "@stitches-rsc/plugin-common";
 
 const source = `
 import { styled } from '@stitches-rsc/react';
@@ -228,29 +241,29 @@ const Button = styled('button', {
 `;
 
 // Step 1: Analyze
-const analysis = analyzeSource(source, 'component.tsx');
-console.log('Usages found:', analysis.usages.length);
+const analysis = analyzeSource(source, "component.tsx");
+console.log("Usages found:", analysis.usages.length);
 
 // Step 2: Extract
 const extraction = extractCss(analysis, {});
-console.log('Rules extracted:', extraction.rules.length);
+console.log("Rules extracted:", extraction.rules.length);
 
 // Step 3: Generate
 const css = generateFullCss(extraction, {
   useScope: true,
   useLayers: true,
 });
-console.log('Generated CSS:\n', css);
+console.log("Generated CSS:\n", css);
 ```
 
 ### Inspecting Class Names
 
 ```typescript
-import { toHash } from '@stitches-rsc/core';
+import { toHash } from "@stitches-rsc/core";
 
 // See how class names are generated
-const styleHash = toHash({ backgroundColor: '$colors$primary' });
-console.log('Hash:', styleHash); // e.g., "abc123"
+const styleHash = toHash({ backgroundColor: "$colors$primary" });
+console.log("Hash:", styleHash); // e.g., "abc123"
 // Full class: c-ComponentName-abc123
 ```
 

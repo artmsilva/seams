@@ -1,9 +1,9 @@
-import { toCssRules } from '../convert/toCssRules.js';
-import { toHash } from '../convert/toHash.js';
-import type { Sheet } from '../sheet.js';
-import type { CSSObject, StitchesConfig } from '../types/css.js';
-import { createMemo } from '../utility/createMemo.js';
-import { define } from '../utility/define.js';
+import { toCssRules } from "../convert/toCssRules.js";
+import { toHash } from "../convert/toHash.js";
+import type { Sheet } from "../sheet.js";
+import type { CSSObject, StitchesConfig } from "../types/css.js";
+import { createMemo } from "../utility/createMemo.js";
+import { define } from "../utility/define.js";
 
 const createGlobalCssFunctionMap = createMemo<GlobalCssFn, []>();
 
@@ -24,14 +24,11 @@ export type GlobalCssFn = (...styles: CSSObject[]) => GlobalCssObject;
  * Creates the globalCss function.
  * Returns a function that applies global styles.
  */
-export const createGlobalCssFunction = (
-  config: StitchesConfig,
-  sheet: Sheet,
-): GlobalCssFn =>
+export const createGlobalCssFunction = (config: StitchesConfig, sheet: Sheet): GlobalCssFn =>
   createGlobalCssFunctionMap(config, () => (...styles: CSSObject[]): GlobalCssObject => {
     const render = (): string => {
       for (let style of styles) {
-        style = typeof style === 'object' && style ? style : {};
+        style = typeof style === "object" && style ? style : {};
 
         const uuid = toHash(style);
 
@@ -39,10 +36,8 @@ export const createGlobalCssFunction = (
           sheet.rules.global.cache.add(uuid);
 
           // Support @import rules
-          if ('@import' in style) {
-            const importValues = ([] as string[]).concat(
-              style['@import'] as string | string[],
-            );
+          if ("@import" in style) {
+            const importValues = ([] as string[]).concat(style["@import"] as string | string[]);
 
             for (let importValue of importValues) {
               // Wrap import in quotes as a convenience
@@ -55,7 +50,7 @@ export const createGlobalCssFunction = (
             }
 
             // Create a copy without @import for further processing
-            const { '@import': _, ...restStyle } = style;
+            const { "@import": _, ...restStyle } = style;
             style = restStyle;
           }
 
@@ -65,7 +60,7 @@ export const createGlobalCssFunction = (
         }
       }
 
-      return '';
+      return "";
     };
 
     return define(render, {

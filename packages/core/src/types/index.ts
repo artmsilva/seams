@@ -8,7 +8,7 @@ export type {
   ThemeConfig,
   ThemeMapConfig,
   UtilsConfig,
-} from './css.js';
+} from "./css.js";
 
 export type {
   Assign,
@@ -22,13 +22,9 @@ export type {
   StringKeys,
   Widen,
   WideObject,
-} from './util.js';
+} from "./util.js";
 
-export type {
-  Token,
-  ThemeScales,
-  ThemeTokens,
-} from './theme.js';
+export type { Token, ThemeScales, ThemeTokens } from "./theme.js";
 
 export type {
   $$StyledComponentMedia,
@@ -39,7 +35,7 @@ export type {
   StyledComponentType,
   TransformProps,
   VariantProps,
-} from './styled-component.js';
+} from "./styled-component.js";
 
 export type {
   CssFunctionType,
@@ -50,4 +46,4 @@ export type {
   StitchesCSS,
   StyleDefinition,
   VariantDefinition,
-} from './stitches.js';
+} from "./stitches.js";

@@ -1,6 +1,6 @@
-import type * as CSS from 'csstype';
+import type * as CSS from "csstype";
 
-import type { ThemeScale } from '../default/defaultThemeMap.js';
+import type { ThemeScale } from "../default/defaultThemeMap.js";
 
 /**
  * A CSS object with nested rules and token support.

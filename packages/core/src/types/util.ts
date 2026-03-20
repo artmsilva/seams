@@ -11,9 +11,9 @@ export type Assign<T1 = object, T2 = object> = Omit<T1, keyof T2> & T2;
 /** Returns a widened value from the given value. */
 export type Widen<T> = T extends number
   ? `${T}` | T
-  : T extends 'true'
+  : T extends "true"
     ? boolean | T
-    : T extends 'false'
+    : T extends "false"
       ? boolean | T
       : T extends `${number}`
         ? number | T

@@ -1,5 +1,5 @@
-import type { CSSObject } from './css.js';
-import type { Prefixed, Widen } from './util.js';
+import type { CSSObject } from "./css.js";
+import type { Prefixed, Widen } from "./util.js";
 
 /**
  * Unique symbol used to reference the type of a Styled Component.
@@ -26,7 +26,7 @@ export type TransformProps<Props, Media> = {
   [K in keyof Props]?:
     | Props[K]
     | ({
-        [KMedia in Prefixed<'@', 'initial' | keyof Media>]?: Props[K];
+        [KMedia in Prefixed<"@", "initial" | keyof Media>]?: Props[K];
       } & {
         [KMedia in string]?: Props[K];
       });
@@ -35,12 +35,7 @@ export type TransformProps<Props, Media> = {
 /**
  * A CSS Component created by the css() function.
  */
-export interface CssComponent<
-  Type = 'span',
-  Props = object,
-  Media = object,
-  CSS = CSSObject,
-> {
+export interface CssComponent<Type = "span", Props = object, Media = object, CSS = CSSObject> {
   (
     props?: TransformProps<Props, Media> & {
       css?: CSS;
@@ -66,7 +61,7 @@ export interface CssComponent<
  * Returns the first Styled Component type from the given array of compositions.
  */
 export type StyledComponentType<T extends unknown[]> = T[0] extends never
-  ? 'span'
+  ? "span"
   : T[0] extends string
     ? T[0]
     : T[0] extends (props: unknown) => unknown
@@ -84,7 +79,7 @@ export type StyledComponentProps<T extends unknown[]> = ($$StyledComponentProps 
   ? T[0][$$StyledComponentProps]
   : T[0] extends { variants: { [name: string]: unknown } }
     ? {
-        [K in keyof T[0]['variants']]?: Widen<keyof T[0]['variants'][K]>;
+        [K in keyof T[0]["variants"]]?: Widen<keyof T[0]["variants"][K]>;
       }
     : object) &
   (T extends [lead: unknown, ...tail: infer V] ? StyledComponentProps<V> : object);

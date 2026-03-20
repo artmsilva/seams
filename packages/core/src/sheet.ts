@@ -9,13 +9,13 @@
  * 7. inline - Inline css prop styles
  */
 export const ruleGroupNames = [
-  'themed',
-  'global',
-  'styled',
-  'onevar',
-  'resonevar',
-  'allvar',
-  'inline',
+  "themed",
+  "global",
+  "styled",
+  "onevar",
+  "resonevar",
+  "allvar",
+  "inline",
 ] as const;
 
 export type RuleGroupName = (typeof ruleGroupNames)[number];
@@ -74,12 +74,12 @@ export const createSheet = (): Sheet => {
       const group = rules[name];
       if (group && group.rules.length > 0) {
         // Add marker for hydration
-        parts.push(`--sxs{--sxs:${ruleGroupNames.indexOf(name)} ${[...group.cache].join(' ')}}`);
-        parts.push(`@media{${group.rules.join('')}}`);
+        parts.push(`--sxs{--sxs:${ruleGroupNames.indexOf(name)} ${[...group.cache].join(" ")}}`);
+        parts.push(`@media{${group.rules.join("")}}`);
       }
     }
 
-    return parts.join('');
+    return parts.join("");
   };
 
   reset();

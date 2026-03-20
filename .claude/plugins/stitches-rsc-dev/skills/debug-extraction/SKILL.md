@@ -24,32 +24,34 @@ Source Code → Analyzer → Extractor → Transformer → CSS Generator
 Add debug logging to plugin config:
 
 **Next.js:**
+
 ```javascript
 // next.config.js
-const withStitchesRSC = require('@stitches-rsc/next-plugin');
+const withStitchesRSC = require("@stitches-rsc/next-plugin");
 
 module.exports = withStitchesRSC({
   // Add files you expect to be processed
-  include: ['src', 'app', 'components'],
-  exclude: ['node_modules'],
+  include: ["src", "app", "components"],
+  exclude: ["node_modules"],
 })({
   webpack: (config, { isServer }) => {
-    console.log('Processing files with extensions:', ['.tsx', '.ts', '.jsx', '.js']);
+    console.log("Processing files with extensions:", [".tsx", ".ts", ".jsx", ".js"]);
     return config;
   },
 });
 ```
 
 **Vite:**
+
 ```typescript
 // vite.config.ts
-import stitchesRSC from '@stitches-rsc/vite-plugin';
+import stitchesRSC from "@stitches-rsc/vite-plugin";
 
 export default defineConfig({
   plugins: [
     stitchesRSC({
-      include: ['src'],
-      exclude: ['node_modules'],
+      include: ["src"],
+      exclude: ["node_modules"],
     }),
   ],
 });
@@ -61,13 +63,13 @@ The analyzer looks for these import patterns:
 
 ```typescript
 // ✅ Detected
-import { styled, css } from '@stitches-rsc/react';
-import { createStitches } from '@stitches-rsc/react';
-import * as Stitches from '@stitches-rsc/react';
+import { styled, css } from "@stitches-rsc/react";
+import { createStitches } from "@stitches-rsc/react";
+import * as Stitches from "@stitches-rsc/react";
 
 // ❌ Not detected (would need config)
-import { styled } from './stitches.config';
-import { css } from '../lib/stitches';
+import { styled } from "./stitches.config";
+import { css } from "../lib/stitches";
 ```
 
 ## Stage-by-Stage Debugging
@@ -77,8 +79,9 @@ import { css } from '../lib/stitches';
 The analyzer parses source code and finds Stitches usage.
 
 **Debug with:**
+
 ```typescript
-import { analyzeSource } from '@stitches-rsc/plugin-common';
+import { analyzeSource } from "@stitches-rsc/plugin-common";
 
 const source = `
 import { styled } from '@stitches-rsc/react';
@@ -88,23 +91,24 @@ const Button = styled('button', {
 });
 `;
 
-const analysis = analyzeSource(source, 'Button.tsx');
+const analysis = analyzeSource(source, "Button.tsx");
 
-console.log('Has Stitches import:', analysis.hasStitchesImport);
-console.log('Configs found:', analysis.configs.length);
-console.log('Usages found:', analysis.usages.length);
+console.log("Has Stitches import:", analysis.hasStitchesImport);
+console.log("Configs found:", analysis.configs.length);
+console.log("Usages found:", analysis.usages.length);
 
 for (const usage of analysis.usages) {
-  console.log('Usage:', {
-    type: usage.type,           // 'styled', 'css', 'globalCss', etc.
-    name: usage.name,           // Variable name if assigned
-    start: usage.start,         // Source position
+  console.log("Usage:", {
+    type: usage.type, // 'styled', 'css', 'globalCss', etc.
+    name: usage.name, // Variable name if assigned
+    start: usage.start, // Source position
     hasDynamicValues: usage.hasDynamicValues,
   });
 }
 ```
 
 **Common issues:**
+
 - `hasStitchesImport: false` → Import path not recognized
 - `usages.length === 0` → Stitches calls not detected
 - `hasDynamicValues: true` → Contains non-static values
@@ -114,24 +118,25 @@ for (const usage of analysis.usages) {
 The extractor converts static usages to CSS rules.
 
 **Debug with:**
-```typescript
-import { analyzeSource, extractCss } from '@stitches-rsc/plugin-common';
 
-const analysis = analyzeSource(source, 'Button.tsx');
+```typescript
+import { analyzeSource, extractCss } from "@stitches-rsc/plugin-common";
+
+const analysis = analyzeSource(source, "Button.tsx");
 const extraction = extractCss(analysis, {
   config: {
-    prefix: 'app',
+    prefix: "app",
     theme: {
-      colors: { primary: '#0070f3' },
+      colors: { primary: "#0070f3" },
     },
   },
 });
 
-console.log('Rules extracted:', extraction.rules.length);
-console.log('Class names:', [...extraction.classNames.entries()]);
+console.log("Rules extracted:", extraction.rules.length);
+console.log("Class names:", [...extraction.classNames.entries()]);
 
 for (const rule of extraction.rules) {
-  console.log('Rule:', {
+  console.log("Rule:", {
     layer: rule.layer,
     selector: rule.selector,
     css: rule.css,
@@ -140,6 +145,7 @@ for (const rule of extraction.rules) {
 ```
 
 **Common issues:**
+
 - `rules.length === 0` → All usages have dynamic values
 - Missing theme tokens → Config not passed correctly
 - Wrong class names → Hash collision or naming issue
@@ -149,29 +155,31 @@ for (const rule of extraction.rules) {
 The transformer converts dynamic values to CSS variables.
 
 **Debug with:**
-```typescript
-import { analyzeSource, extractCss, transformSource } from '@stitches-rsc/plugin-common';
 
-const analysis = analyzeSource(source, 'Button.tsx');
+```typescript
+import { analyzeSource, extractCss, transformSource } from "@stitches-rsc/plugin-common";
+
+const analysis = analyzeSource(source, "Button.tsx");
 const extraction = extractCss(analysis, {});
 const transformed = transformSource({
   analysis,
   extraction,
 });
 
-console.log('Transformed code:', transformed.code);
-console.log('Dynamic variables:', transformed.dynamicVariables);
+console.log("Transformed code:", transformed.code);
+console.log("Dynamic variables:", transformed.dynamicVariables);
 
 for (const dynVar of transformed.dynamicVariables) {
-  console.log('Dynamic var:', {
-    variableName: dynVar.variableName,  // e.g., '--stitches-dyn-0'
-    expression: dynVar.expression,       // Original JS expression
+  console.log("Dynamic var:", {
+    variableName: dynVar.variableName, // e.g., '--stitches-dyn-0'
+    expression: dynVar.expression, // Original JS expression
     className: dynVar.className,
   });
 }
 ```
 
 **Common issues:**
+
 - Dynamic variables not created → Expression not detected as dynamic
 - Wrong expression captured → AST traversal issue
 
@@ -180,20 +188,22 @@ for (const dynVar of transformed.dynamicVariables) {
 The generator produces final CSS with layers and scope.
 
 **Debug with:**
+
 ```typescript
-import { generateFullCss } from '@stitches-rsc/plugin-common';
+import { generateFullCss } from "@stitches-rsc/plugin-common";
 
 const css = generateFullCss(extraction, {
   useScope: true,
   useLayers: true,
   minify: false,
-  layerPrefix: 'stitches',
+  layerPrefix: "stitches",
 });
 
-console.log('Generated CSS:\n', css);
+console.log("Generated CSS:\n", css);
 ```
 
 **Common issues:**
+
 - No `@layer` → `useLayers: false`
 - No `@scope` → `useScope: false`
 - Minified output hard to read → Set `minify: false`
@@ -203,45 +213,45 @@ console.log('Generated CSS:\n', css);
 Create `debug-extraction.ts`:
 
 ```typescript
-import { readFileSync } from 'fs';
+import { readFileSync } from "fs";
 import {
   analyzeSource,
   extractCss,
   transformSource,
   generateFullCss,
-} from '@stitches-rsc/plugin-common';
+} from "@stitches-rsc/plugin-common";
 
 const filename = process.argv[2];
 if (!filename) {
-  console.error('Usage: npx tsx debug-extraction.ts <file>');
+  console.error("Usage: npx tsx debug-extraction.ts <file>");
   process.exit(1);
 }
 
-const source = readFileSync(filename, 'utf-8');
+const source = readFileSync(filename, "utf-8");
 
-console.log('=== STAGE 1: ANALYSIS ===');
+console.log("=== STAGE 1: ANALYSIS ===");
 const analysis = analyzeSource(source, filename);
-console.log('Has import:', analysis.hasStitchesImport);
-console.log('Usages:', analysis.usages.length);
+console.log("Has import:", analysis.hasStitchesImport);
+console.log("Usages:", analysis.usages.length);
 analysis.usages.forEach((u, i) => {
   console.log(`  [${i}] ${u.type} "${u.name}" dynamic=${u.hasDynamicValues}`);
 });
 
-console.log('\n=== STAGE 2: EXTRACTION ===');
+console.log("\n=== STAGE 2: EXTRACTION ===");
 const extraction = extractCss(analysis, {});
-console.log('Rules:', extraction.rules.length);
+console.log("Rules:", extraction.rules.length);
 extraction.rules.forEach((r, i) => {
   console.log(`  [${i}] ${r.layer}: ${r.selector}`);
 });
 
-console.log('\n=== STAGE 3: TRANSFORMATION ===');
+console.log("\n=== STAGE 3: TRANSFORMATION ===");
 const transformed = transformSource({ analysis, extraction });
-console.log('Dynamic vars:', transformed.dynamicVariables.length);
+console.log("Dynamic vars:", transformed.dynamicVariables.length);
 transformed.dynamicVariables.forEach((v, i) => {
   console.log(`  [${i}] ${v.variableName} = ${v.expression}`);
 });
 
-console.log('\n=== STAGE 4: CSS OUTPUT ===');
+console.log("\n=== STAGE 4: CSS OUTPUT ===");
 const css = generateFullCss(extraction, {
   useScope: true,
   useLayers: true,
@@ -251,6 +261,7 @@ console.log(css);
 ```
 
 Run with:
+
 ```bash
 npx tsx debug-extraction.ts src/components/Button.tsx
 ```
@@ -261,23 +272,25 @@ npx tsx debug-extraction.ts src/components/Button.tsx
 
 **Cause:** Import path doesn't match expected patterns
 **Solution:** Use standard import paths:
+
 ```typescript
-import { styled } from '@stitches-rsc/react';
+import { styled } from "@stitches-rsc/react";
 ```
 
 ### Problem: "Usage has dynamic values, skipping extraction"
 
 **Cause:** Non-literal values in style object
 **Solution:** Make values static or let them become CSS variables:
+
 ```typescript
 // Dynamic - will use CSS variable
-const Box = styled('div', {
-  margin: dynamicValue,  // Becomes var(--stitches-dyn-X)
+const Box = styled("div", {
+  margin: dynamicValue, // Becomes var(--stitches-dyn-X)
 });
 
 // Static - will be extracted
-const Box = styled('div', {
-  margin: '16px',
+const Box = styled("div", {
+  margin: "16px",
 });
 ```
 
@@ -285,11 +298,12 @@ const Box = styled('div', {
 
 **Cause:** Theme config not passed to extractor
 **Solution:** Ensure config is provided:
+
 ```typescript
 const extraction = extractCss(analysis, {
   config: {
     theme: {
-      colors: { primary: '#0070f3' },
+      colors: { primary: "#0070f3" },
     },
   },
 });
@@ -298,6 +312,7 @@ const extraction = extractCss(analysis, {
 ### Problem: "CSS not appearing in build output"
 
 **Causes:**
+
 1. File not in include path
 2. File in exclude path
 3. Build plugin not configured

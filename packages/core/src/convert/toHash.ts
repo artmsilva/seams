@@ -10,7 +10,7 @@ const toAlphabeticChar = (code: number): string =>
  * Results in compact strings like "PJLV", "abc", etc.
  */
 const toAlphabeticName = (code: number): string => {
-  let name = '';
+  let name = "";
   let x: number;
 
   for (x = Math.abs(code); x > 52; x = (x / 52) | 0) {

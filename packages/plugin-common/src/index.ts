@@ -1,37 +1,18 @@
 // Analyzer
-export { analyzeSource } from './analyzer.js';
-export type {
-  AnalysisResult,
-  StitchesConfig,
-  StitchesUsage,
-} from './analyzer.js';
+export { analyzeSource } from "./analyzer.js";
+export type { AnalysisResult, StitchesConfig, StitchesUsage } from "./analyzer.js";
 
 // Extractor
-export { extractCss } from './extractor.js';
-export type {
-  ExtractedRule,
-  ExtractionResult,
-  ExtractorOptions,
-} from './extractor.js';
+export { extractCss } from "./extractor.js";
+export type { ExtractedRule, ExtractionResult, ExtractorOptions } from "./extractor.js";
 
 // Transformer
-export {
-  transformSource,
-  resetDynamicVarCounter,
-} from './transformer.js';
-export type {
-  TransformOptions,
-  TransformResult,
-  DynamicVariable,
-} from './transformer.js';
+export { transformSource, resetDynamicVarCounter } from "./transformer.js";
+export type { TransformOptions, TransformResult, DynamicVariable } from "./transformer.js";
 
 // CSS Generator
-export {
-  generateCss,
-  generateScopeFallback,
-  generateFullCss,
-} from './cssGenerator.js';
-export type { CssGeneratorOptions } from './cssGenerator.js';
+export { generateCss, generateScopeFallback, generateFullCss } from "./cssGenerator.js";
+export type { CssGeneratorOptions } from "./cssGenerator.js";
 
 /**
  * Main processing pipeline for Stitches RSC.
@@ -84,10 +65,10 @@ export interface ProcessOptions {
   };
 }
 
-import { analyzeSource } from './analyzer.js';
-import { extractCss } from './extractor.js';
-import { transformSource } from './transformer.js';
-import { generateFullCss } from './cssGenerator.js';
+import { analyzeSource } from "./analyzer.js";
+import { extractCss } from "./extractor.js";
+import { transformSource } from "./transformer.js";
+import { generateFullCss } from "./cssGenerator.js";
 
 /**
  * Process a source file through the complete Stitches RSC pipeline.
@@ -102,7 +83,7 @@ export const processSource = (
 
   if (!analysis.hasStitchesImport || analysis.usages.length === 0) {
     return {
-      css: '',
+      css: "",
       code: source,
       dynamicVariables: [],
       hasStitches: false,
@@ -123,7 +104,7 @@ export const processSource = (
     useScope: options.useScope ?? true,
     useLayers: options.useLayers ?? true,
     minify: options.minify ?? false,
-    layerPrefix: options.layerPrefix ?? 'stitches',
+    layerPrefix: options.layerPrefix ?? "stitches",
   });
 
   return {

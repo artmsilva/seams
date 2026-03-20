@@ -1,8 +1,8 @@
-import type { Plugin, ResolvedConfig } from 'vite';
-import path from 'path';
+import type { Plugin, ResolvedConfig } from "vite";
+import path from "path";
 
-import { processSource } from '@stitches-rsc/plugin-common';
-import type { ProcessOptions } from '@stitches-rsc/plugin-common';
+import { processSource } from "@stitches-rsc/plugin-common";
+import type { ProcessOptions } from "@stitches-rsc/plugin-common";
 
 /**
  * Options for the Stitches RSC Vite plugin.
@@ -47,9 +47,9 @@ interface CollectedCss {
  */
 export const stitchesRSC = (options: StitchesVitePluginOptions = {}): Plugin => {
   const {
-    extensions = ['.tsx', '.ts', '.jsx', '.js'],
-    include = ['src', 'app', 'components'],
-    exclude = ['node_modules'],
+    extensions = [".tsx", ".ts", ".jsx", ".js"],
+    include = ["src", "app", "components"],
+    exclude = ["node_modules"],
     ...processOptions
   } = options;
 
@@ -57,12 +57,12 @@ export const stitchesRSC = (options: StitchesVitePluginOptions = {}): Plugin => 
   const collectedCss: Map<string, CollectedCss> = new Map();
 
   // Virtual module ID for the combined CSS
-  const virtualModuleId = 'virtual:stitches-rsc.css';
-  const resolvedVirtualModuleId = '\0' + virtualModuleId;
+  const virtualModuleId = "virtual:stitches-rsc.css";
+  const resolvedVirtualModuleId = "\0" + virtualModuleId;
 
   return {
-    name: 'stitches-rsc',
-    enforce: 'pre',
+    name: "stitches-rsc",
+    enforce: "pre",
 
     configResolved(resolvedConfig) {
       config = resolvedConfig;
@@ -79,7 +79,7 @@ export const stitchesRSC = (options: StitchesVitePluginOptions = {}): Plugin => 
         // Combine all collected CSS
         const allCss = Array.from(collectedCss.values())
           .map((c) => c.css)
-          .join('\n');
+          .join("\n");
         return allCss;
       }
     },
@@ -104,7 +104,7 @@ export const stitchesRSC = (options: StitchesVitePluginOptions = {}): Plugin => 
         const result = processSource(code, id, {
           useScope: processOptions.useScope,
           useLayers: processOptions.useLayers,
-          minify: config.mode === 'production',
+          minify: config.mode === "production",
           layerPrefix: processOptions.layerPrefix,
           config: processOptions.config,
         });
@@ -131,12 +131,12 @@ export const stitchesRSC = (options: StitchesVitePluginOptions = {}): Plugin => 
                 version: 3 as const,
                 sources: [id],
                 names: [],
-                mappings: (result.map as { mappings?: string }).mappings ?? '',
+                mappings: (result.map as { mappings?: string }).mappings ?? "",
               }
             : undefined,
         };
       } catch (error) {
-        this.error(`Error processing Stitches in ${id}: ${error}`);
+        this.error(`Error processing Stitches in ${id}: ${String(error)}`);
         return null;
       }
     },
@@ -151,16 +151,16 @@ export const stitchesRSC = (options: StitchesVitePluginOptions = {}): Plugin => 
       }
     },
 
-    generateBundle(_, bundle) {
+    generateBundle(_, _bundle) {
       // In production, emit a separate CSS file
-      if (config.mode === 'production' && collectedCss.size > 0) {
+      if (config.mode === "production" && collectedCss.size > 0) {
         const allCss = Array.from(collectedCss.values())
           .map((c) => c.css)
-          .join('\n');
+          .join("\n");
 
         this.emitFile({
-          type: 'asset',
-          fileName: 'stitches.css',
+          type: "asset",
+          fileName: "stitches.css",
           source: allCss,
         });
       }
@@ -172,4 +172,4 @@ export const stitchesRSC = (options: StitchesVitePluginOptions = {}): Plugin => 
 export default stitchesRSC;
 
 // Re-export types
-export type { ProcessOptions, ProcessResult } from '@stitches-rsc/plugin-common';
+export type { ProcessOptions, ProcessResult } from "@stitches-rsc/plugin-common";

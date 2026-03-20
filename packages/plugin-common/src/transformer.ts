@@ -1,14 +1,18 @@
-import _generate from '@babel/generator';
-import * as parser from '@babel/parser';
-import _traverse from '@babel/traverse';
-import * as t from '@babel/types';
+import _generate from "@babel/generator";
+import * as parser from "@babel/parser";
+import _traverse from "@babel/traverse";
+import * as t from "@babel/types";
 
-import type { AnalysisResult, StitchesUsage } from './analyzer.js';
-import type { ExtractionResult } from './extractor.js';
+import type { AnalysisResult, StitchesUsage } from "./analyzer.js";
+import type { ExtractionResult } from "./extractor.js";
 
 // Handle both ESM and CJS imports
-const traverse = (typeof _traverse === 'function' ? _traverse : (_traverse as { default: typeof _traverse }).default) as typeof _traverse;
-const generate = (typeof _generate === 'function' ? _generate : (_generate as { default: typeof _generate }).default) as typeof _generate;
+const traverse = (
+  typeof _traverse === "function" ? _traverse : (_traverse as { default: typeof _traverse }).default
+) as typeof _traverse;
+const generate = (
+  typeof _generate === "function" ? _generate : (_generate as { default: typeof _generate }).default
+) as typeof _generate;
 
 /**
  * Options for the code transformer.
@@ -60,8 +64,8 @@ export const transformSource = (options: TransformOptions): TransformResult => {
 
   // Parse the source again to get a fresh AST we can modify
   const ast = parser.parse(analysis.source, {
-    sourceType: 'module',
-    plugins: ['typescript', 'jsx'],
+    sourceType: "module",
+    plugins: ["typescript", "jsx"],
   });
 
   // Create a map of start positions to usages for quick lookup
@@ -71,9 +75,7 @@ export const transformSource = (options: TransformOptions): TransformResult => {
   }
 
   // Track which usages were extracted statically
-  const extractedStarts = new Set(
-    extraction.rules.map((r) => r.usage.start),
-  );
+  const extractedStarts = new Set(extraction.rules.map((r) => r.usage.start));
 
   traverse(ast, {
     // Transform JSX elements with css prop that have dynamic values
@@ -81,7 +83,7 @@ export const transformSource = (options: TransformOptions): TransformResult => {
       const { node } = path;
       if (
         t.isJSXIdentifier(node.name) &&
-        node.name.name === 'css' &&
+        node.name.name === "css" &&
         t.isJSXExpressionContainer(node.value)
       ) {
         const expr = node.value.expression;
@@ -102,7 +104,7 @@ export const transformSource = (options: TransformOptions): TransformResult => {
 
       // If this was extracted statically, we might want to simplify it
       if (extractedStarts.has(start) && !keepOriginal) {
-        const className = extraction.classNames.get(usage.name ?? '');
+        const className = extraction.classNames.get(usage.name ?? "");
         if (className && usage.name) {
           // For styled components, we can't simply replace the call
           // since we need to maintain the component structure
@@ -121,7 +123,7 @@ export const transformSource = (options: TransformOptions): TransformResult => {
 
   const result = generate(ast, {
     sourceMaps: true,
-    sourceFileName: 'transformed.tsx',
+    sourceFileName: "transformed.tsx",
   });
 
   return {
@@ -138,7 +140,7 @@ const transformCssProp = (
   path: { node: { name: t.JSXIdentifier; value: t.JSXExpressionContainer } },
   cssObject: t.ObjectExpression,
   dynamicVariables: DynamicVariable[],
-  extraction: ExtractionResult,
+  _extraction: ExtractionResult,
 ): void => {
   const styleProperties: t.ObjectProperty[] = [];
   const staticProperties: t.ObjectProperty[] = [];
@@ -160,25 +162,15 @@ const transformCssProp = (
       const varName = `--stitches-dyn-${dynamicVarCounter++}`;
 
       // Add to style prop for runtime injection
-      styleProperties.push(
-        t.objectProperty(
-          t.stringLiteral(varName),
-          prop.value as t.Expression,
-        ),
-      );
+      styleProperties.push(t.objectProperty(t.stringLiteral(varName), prop.value as t.Expression));
 
       // Replace in CSS with var() reference
-      staticProperties.push(
-        t.objectProperty(
-          prop.key,
-          t.stringLiteral(`var(${varName})`),
-        ),
-      );
+      staticProperties.push(t.objectProperty(prop.key, t.stringLiteral(`var(${varName})`)));
 
       dynamicVariables.push({
         variableName: varName,
         expression: generate(prop.value as t.Expression).code,
-        className: '',
+        className: "",
       });
     } else {
       staticProperties.push(prop);
@@ -218,7 +210,7 @@ const transformDynamicCall = (
   const lastArg = args[args.length - 1];
   if (!t.isObjectExpression(lastArg)) return;
 
-  const className = extraction.classNames.get(usage.name ?? '') ?? '';
+  const className = extraction.classNames.get(usage.name ?? "") ?? "";
 
   for (const prop of lastArg.properties) {
     if (!t.isObjectProperty(prop)) continue;
@@ -229,7 +221,7 @@ const transformDynamicCall = (
         ? prop.key.value
         : null;
 
-    if (!key || key === 'variants' || key === 'compoundVariants' || key === 'defaultVariants') {
+    if (!key || key === "variants" || key === "compoundVariants" || key === "defaultVariants") {
       continue;
     }
 

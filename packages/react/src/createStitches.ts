@@ -1,11 +1,8 @@
-import { createStitches as createStitchesCore } from '@stitches-rsc/core';
-import type {
-  CreateStitchesConfig,
-  Stitches as StitchesCore,
-} from '@stitches-rsc/core';
+import { createStitches as createStitchesCore } from "@stitches-rsc/core";
+import type { CreateStitchesConfig, Stitches as StitchesCore } from "@stitches-rsc/core";
 
-import { createStyledFunction } from './features/styled.js';
-import type { StyledFn } from './features/styled.js';
+import { createStyledFunction } from "./features/styled.js";
+import type { StyledFn } from "./features/styled.js";
 
 /**
  * Extended Stitches instance with React-specific features.
