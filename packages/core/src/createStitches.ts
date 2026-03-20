@@ -1,14 +1,14 @@
-import { defaultThemeMap } from './default/defaultThemeMap.js';
-import { createCssFunction } from './features/css.js';
-import type { CssFn } from './features/css.js';
-import { createCreateThemeFunction } from './features/createTheme.js';
-import type { CreateThemeFn, ThemeObject } from './features/createTheme.js';
-import { createGlobalCssFunction } from './features/globalCss.js';
-import type { GlobalCssFn } from './features/globalCss.js';
-import { createKeyframesFunction } from './features/keyframes.js';
-import type { KeyframesFn } from './features/keyframes.js';
-import { createSheet } from './sheet.js';
-import type { Sheet } from './sheet.js';
+import { defaultThemeMap } from "./default/defaultThemeMap.js";
+import { createCssFunction } from "./features/css.js";
+import type { CssFn } from "./features/css.js";
+import { createCreateThemeFunction } from "./features/createTheme.js";
+import type { CreateThemeFn, ThemeObject } from "./features/createTheme.js";
+import { createGlobalCssFunction } from "./features/globalCss.js";
+import type { GlobalCssFn } from "./features/globalCss.js";
+import { createKeyframesFunction } from "./features/keyframes.js";
+import type { KeyframesFn } from "./features/keyframes.js";
+import { createSheet } from "./sheet.js";
+import type { Sheet } from "./sheet.js";
 import type {
   CreateStitchesConfig,
   MediaConfig,
@@ -16,8 +16,8 @@ import type {
   ThemeConfig,
   ThemeMapConfig,
   UtilsConfig,
-} from './types/css.js';
-import { createMemo } from './utility/createMemo.js';
+} from "./types/css.js";
+import { createMemo } from "./utility/createMemo.js";
 
 const createCssMap = createMemo<Stitches, []>();
 
@@ -86,20 +86,17 @@ export const createStitches = (initConfig?: CreateStitchesConfig): Stitches => {
     didRun = true;
 
     const config =
-      typeof rawConfig === 'object' && rawConfig ? rawConfig : ({} as CreateStitchesConfig);
+      typeof rawConfig === "object" && rawConfig ? rawConfig : ({} as CreateStitchesConfig);
 
     // Internal configuration
-    const prefix: string = 'prefix' in config ? String(config.prefix) : '';
-    const media: MediaConfig =
-      typeof config.media === 'object' && config.media ? config.media : {};
-    const theme: ThemeConfig =
-      typeof config.theme === 'object' && config.theme ? config.theme : {};
+    const prefix: string = "prefix" in config ? String(config.prefix) : "";
+    const media: MediaConfig = typeof config.media === "object" && config.media ? config.media : {};
+    const theme: ThemeConfig = typeof config.theme === "object" && config.theme ? config.theme : {};
     const themeMap: ThemeMapConfig =
-      typeof config.themeMap === 'object' && config.themeMap
+      typeof config.themeMap === "object" && config.themeMap
         ? config.themeMap
         : { ...defaultThemeMap };
-    const utils: UtilsConfig =
-      typeof config.utils === 'object' && config.utils ? config.utils : {};
+    const utils: UtilsConfig = typeof config.utils === "object" && config.utils ? config.utils : {};
 
     /** External configuration. */
     const resolvedConfig: StitchesConfig = {

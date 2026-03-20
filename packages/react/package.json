@@ -2,7 +2,25 @@
   "name": "@stitches-rsc/react",
   "version": "0.1.0",
   "description": "React bindings for Stitches RSC",
+  "keywords": [
+    "css-in-js",
+    "react",
+    "react-server-components",
+    "rsc",
+    "stitches",
+    "styling"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stitches-rsc/stitches-rsc.git",
+    "directory": "packages/react"
+  },
+  "files": [
+    "dist"
+  ],
   "type": "module",
+  "sideEffects": false,
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -18,7 +36,6 @@
       }
     }
   },
-  "files": ["dist"],
   "scripts": {
     "build": "tsup && tsc --emitDeclarationOnly --declaration --outDir dist",
     "dev": "tsup --watch",
@@ -28,21 +45,16 @@
   "dependencies": {
     "@stitches-rsc/core": "workspace:*"
   },
+  "devDependencies": {
+    "@types/react": "catalog:",
+    "react": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:"
+  },
   "peerDependencies": {
     "react": "^18.3.0 || ^19.0.0"
   },
-  "devDependencies": {
-    "@types/react": "^18.3.0",
-    "react": "^18.3.0",
-    "tsup": "^8.0.0",
-    "typescript": "^5.4.0"
-  },
-  "sideEffects": false,
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/stitches-rsc/stitches-rsc.git",
-    "directory": "packages/react"
-  },
-  "keywords": ["css-in-js", "stitches", "rsc", "react-server-components", "styling", "react"]
+  "engines": {
+    "node": ">=24.0.0"
+  }
 }

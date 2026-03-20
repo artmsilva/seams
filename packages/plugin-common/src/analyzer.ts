@@ -1,16 +1,18 @@
-import * as parser from '@babel/parser';
-import _traverse from '@babel/traverse';
-import * as t from '@babel/types';
+import * as parser from "@babel/parser";
+import _traverse from "@babel/traverse";
+import * as t from "@babel/types";
 
 // Handle both ESM and CJS imports
-const traverse = (typeof _traverse === 'function' ? _traverse : (_traverse as { default: typeof _traverse }).default) as typeof _traverse;
+const traverse = (
+  typeof _traverse === "function" ? _traverse : (_traverse as { default: typeof _traverse }).default
+) as typeof _traverse;
 
 /**
  * Information about a Stitches usage found in the code.
  */
 export interface StitchesUsage {
   /** Type of usage: styled, css, globalCss, keyframes, createTheme */
-  type: 'styled' | 'css' | 'globalCss' | 'keyframes' | 'createTheme';
+  type: "styled" | "css" | "globalCss" | "keyframes" | "createTheme";
   /** The variable name if assigned */
   name?: string;
   /** The AST node */
@@ -67,10 +69,7 @@ const containsDynamicValues = (node: t.Node): boolean => {
         // Check if this identifier is a reference to an outer scope variable
         if (!path.scope.hasBinding(path.node.name)) {
           // Skip if it's a property key
-          if (
-            path.parentPath.isObjectProperty() &&
-            path.parentPath.node.key === path.node
-          ) {
+          if (path.parentPath.isObjectProperty() && path.parentPath.node.key === path.node) {
             return;
           }
           // Skip if it's a member expression property (non-computed)
@@ -116,10 +115,10 @@ const extractStaticValue = (node: t.Node): unknown => {
   if (t.isNullLiteral(node)) {
     return null;
   }
-  if (t.isIdentifier(node) && node.name === 'undefined') {
+  if (t.isIdentifier(node) && node.name === "undefined") {
     return undefined;
   }
-  if (t.isUnaryExpression(node) && node.operator === '-' && t.isNumericLiteral(node.argument)) {
+  if (t.isUnaryExpression(node) && node.operator === "-" && t.isNumericLiteral(node.argument)) {
     return -node.argument.value;
   }
   if (t.isObjectExpression(node)) {
@@ -142,7 +141,7 @@ const extractStaticValue = (node: t.Node): unknown => {
     return node.elements.map((el) => (el ? extractStaticValue(el) : null));
   }
   if (t.isTemplateLiteral(node) && node.expressions.length === 0) {
-    return node.quasis.map((q) => q.value.cooked).join('');
+    return node.quasis.map((q) => q.value.cooked).join("");
   }
   return undefined;
 };
@@ -152,8 +151,8 @@ const extractStaticValue = (node: t.Node): unknown => {
  */
 export const analyzeSource = (source: string, filename: string): AnalysisResult => {
   const ast = parser.parse(source, {
-    sourceType: 'module',
-    plugins: ['typescript', 'jsx'],
+    sourceType: "module",
+    plugins: ["typescript", "jsx"],
     sourceFilename: filename,
   });
 
@@ -170,10 +169,10 @@ export const analyzeSource = (source: string, filename: string): AnalysisResult 
     ImportDeclaration(path) {
       const source = path.node.source.value;
       if (
-        source === '@stitches-rsc/react' ||
-        source === '@stitches-rsc/core' ||
-        source === '@stitches/react' ||
-        source === '@stitches/core'
+        source === "@stitches-rsc/react" ||
+        source === "@stitches-rsc/core" ||
+        source === "@stitches/react" ||
+        source === "@stitches/core"
       ) {
         hasStitchesImport = true;
 
@@ -193,7 +192,7 @@ export const analyzeSource = (source: string, filename: string): AnalysisResult 
       if (
         t.isCallExpression(path.node.init) &&
         t.isIdentifier(path.node.init.callee) &&
-        stitchesImports.get(path.node.init.callee.name) === 'createStitches'
+        stitchesImports.get(path.node.init.callee.name) === "createStitches"
       ) {
         // Destructured pattern: const { styled, css } = createStitches(...)
         if (t.isObjectPattern(path.node.id)) {
@@ -210,21 +209,23 @@ export const analyzeSource = (source: string, filename: string): AnalysisResult 
 
           const configArg = path.node.init.arguments[0];
           configs.push({
-            instanceName: '',
+            instanceName: "",
             exports,
-            config: configArg && !containsDynamicValues(configArg)
-              ? (extractStaticValue(configArg) as Record<string, unknown>)
-              : undefined,
+            config:
+              configArg && !containsDynamicValues(configArg)
+                ? (extractStaticValue(configArg) as Record<string, unknown>)
+                : undefined,
           });
         }
         // Direct assignment: const stitches = createStitches(...)
         else if (t.isIdentifier(path.node.id)) {
           configs.push({
             instanceName: path.node.id.name,
-            exports: ['css', 'styled', 'globalCss', 'keyframes', 'createTheme', 'theme'],
-            config: path.node.init.arguments[0] && !containsDynamicValues(path.node.init.arguments[0])
-              ? (extractStaticValue(path.node.init.arguments[0]) as Record<string, unknown>)
-              : undefined,
+            exports: ["css", "styled", "globalCss", "keyframes", "createTheme", "theme"],
+            config:
+              path.node.init.arguments[0] && !containsDynamicValues(path.node.init.arguments[0])
+                ? (extractStaticValue(path.node.init.arguments[0]) as Record<string, unknown>)
+                : undefined,
           });
         }
       }
@@ -255,7 +256,10 @@ export const analyzeSource = (source: string, filename: string): AnalysisResult 
         }
       }
 
-      if (functionName && ['styled', 'css', 'globalCss', 'keyframes', 'createTheme'].includes(functionName)) {
+      if (
+        functionName &&
+        ["styled", "css", "globalCss", "keyframes", "createTheme"].includes(functionName)
+      ) {
         const parent = path.parentPath;
         let name: string | undefined;
 
@@ -284,7 +288,7 @@ export const analyzeSource = (source: string, filename: string): AnalysisResult 
         }
 
         usages.push({
-          type: functionName as StitchesUsage['type'],
+          type: functionName as StitchesUsage["type"],
           name,
           node: path.node,
           start: path.node.start ?? 0,

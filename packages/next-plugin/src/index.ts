@@ -1,7 +1,7 @@
-import type { NextConfig } from 'next';
-import path from 'path';
+import type { NextConfig } from "next";
+import path from "path";
 
-import type { ProcessOptions } from '@stitches-rsc/plugin-common';
+import type { ProcessOptions } from "@stitches-rsc/plugin-common";
 
 /**
  * Options for the Stitches RSC Next.js plugin.
@@ -31,13 +31,11 @@ export interface StitchesNextPluginOptions extends ProcessOptions {
  * });
  * ```
  */
-export const withStitchesRSC = (
-  pluginOptions: StitchesNextPluginOptions = {},
-) => {
+export const withStitchesRSC = (pluginOptions: StitchesNextPluginOptions = {}) => {
   const {
-    extensions = ['.tsx', '.ts', '.jsx', '.js'],
-    include = ['app', 'components', 'src', 'pages'],
-    exclude = ['node_modules'],
+    extensions = [".tsx", ".ts", ".jsx", ".js"],
+    include = ["app", "components", "src", "pages"],
+    exclude = ["node_modules"],
     ...processOptions
   } = pluginOptions;
 
@@ -49,21 +47,17 @@ export const withStitchesRSC = (
         const projectRoot = context.dir;
 
         // Create include/exclude patterns
-        const includePatterns = include.map((dir) =>
-          path.resolve(projectRoot, dir),
-        );
-        const excludePatterns = exclude.map((dir) =>
-          path.resolve(projectRoot, dir),
-        );
+        const includePatterns = include.map((dir) => path.resolve(projectRoot, dir));
+        const excludePatterns = exclude.map((dir) => path.resolve(projectRoot, dir));
 
         // Add our loader
         config.module.rules.push({
-          test: new RegExp(`\\.(${extensions.map((e) => e.slice(1)).join('|')})$`),
+          test: new RegExp(`\\.(${extensions.map((e) => e.slice(1)).join("|")})$`),
           include: includePatterns,
           exclude: excludePatterns,
           use: [
             {
-              loader: require.resolve('./loader'),
+              loader: require.resolve("./loader"),
               options: {
                 extensions,
                 ...processOptions,
@@ -73,7 +67,7 @@ export const withStitchesRSC = (
         });
 
         // Call the original webpack function if it exists
-        if (typeof nextConfig.webpack === 'function') {
+        if (typeof nextConfig.webpack === "function") {
           return nextConfig.webpack(config, context);
         }
 
@@ -87,4 +81,4 @@ export const withStitchesRSC = (
 export default withStitchesRSC;
 
 // Re-export types from plugin-common
-export type { ProcessOptions, ProcessResult } from '@stitches-rsc/plugin-common';
+export type { ProcessOptions, ProcessResult } from "@stitches-rsc/plugin-common";

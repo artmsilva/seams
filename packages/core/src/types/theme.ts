@@ -46,10 +46,7 @@ export interface ThemeScales {
 /**
  * Converts a theme definition into typed tokens.
  */
-export type ThemeTokens<
-  Theme extends ThemeScales,
-  Prefix extends string = '',
-> = {
+export type ThemeTokens<Theme extends ThemeScales, Prefix extends string = ""> = {
   [Scale in keyof Theme]: {
     [TokenName in keyof Theme[Scale]]: Token<
       Extract<TokenName, string | number>,

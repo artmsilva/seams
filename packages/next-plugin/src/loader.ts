@@ -1,7 +1,7 @@
-import type { LoaderContext } from 'webpack';
+import type { LoaderContext } from "webpack";
 
-import { processSource } from '@stitches-rsc/plugin-common';
-import type { ProcessOptions } from '@stitches-rsc/plugin-common';
+import { processSource } from "@stitches-rsc/plugin-common";
+import type { ProcessOptions } from "@stitches-rsc/plugin-common";
 
 /**
  * Options for the Stitches RSC webpack loader.
@@ -24,7 +24,7 @@ export default function stitchesLoader(
   const filename = this.resourcePath;
 
   // Check if file should be processed
-  const extensions = options.extensions ?? ['.tsx', '.ts', '.jsx', '.js'];
+  const extensions = options.extensions ?? [".tsx", ".ts", ".jsx", ".js"];
   const shouldProcess = extensions.some((ext) => filename.endsWith(ext));
 
   if (!shouldProcess) {
@@ -48,14 +48,17 @@ export default function stitchesLoader(
 
     // Emit CSS as a separate asset
     if (result.css) {
-      const cssFilename = filename.replace(/\.(tsx?|jsx?)$/, '.stitches.css');
+      const cssFilename = filename.replace(/\.(tsx?|jsx?)$/, ".stitches.css");
       this.emitFile(cssFilename, result.css);
     }
 
     // Add CSS import to the transformed code
     let transformedCode = result.code;
     if (result.css) {
-      const cssImport = `import './${filename.split('/').pop()?.replace(/\.(tsx?|jsx?)$/, '.stitches.css')}';\n`;
+      const cssImport = `import './${filename
+        .split("/")
+        .pop()
+        ?.replace(/\.(tsx?|jsx?)$/, ".stitches.css")}';\n`;
       transformedCode = cssImport + transformedCode;
     }
 

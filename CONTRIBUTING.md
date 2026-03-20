@@ -5,31 +5,41 @@ Thank you for your interest in contributing!
 ## Development Setup
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/artmsilva/stitches-rsc.git
    cd stitches-rsc
    ```
 
-2. Install dependencies:
+2. Install [Vite+](https://viteplus.dev/) (the unified toolchain):
+
    ```bash
-   pnpm install
+   curl -fsSL https://vite.plus | bash
    ```
 
-3. Build all packages:
+3. Install dependencies:
+
    ```bash
-   pnpm build
+   vp install
+   ```
+
+4. Build all packages:
+   ```bash
+   vp run build
    ```
 
 ## Available Commands
 
-| Command | Description |
-|---------|-------------|
-| `pnpm build` | Build all packages |
-| `pnpm test` | Run tests in watch mode |
-| `pnpm test:run` | Run tests once |
-| `pnpm lint` | Run ESLint |
-| `pnpm typecheck` | Run TypeScript type checking |
-| `pnpm clean` | Remove build artifacts |
+| Command            | Description                  |
+| ------------------ | ---------------------------- |
+| `vp run build`     | Build all packages           |
+| `vp test`          | Run tests in watch mode      |
+| `vp test run`      | Run tests once               |
+| `vp check`         | Format, lint, and type check |
+| `vp lint`          | Lint with Oxlint             |
+| `vp fmt`           | Format with Oxfmt            |
+| `vp run typecheck` | Run TypeScript type checking |
+| `vp run clean`     | Remove build artifacts       |
 
 ## Code Style
 
@@ -42,14 +52,14 @@ Thank you for your interest in contributing!
 
 1. Fork the repository and create a branch from `main`
 2. Make your changes
-3. Ensure tests pass: `pnpm test:run`
-4. Ensure linting passes: `pnpm lint`
-5. Ensure types check: `pnpm typecheck`
-6. Submit a pull request
+3. Ensure all checks pass: `vp check`
+4. Ensure tests pass: `vp test run`
+5. Submit a pull request
 
 ## Commit Messages
 
 Use clear, descriptive commit messages. Examples:
+
 - `fix: resolve token transformation for nested values`
 - `feat: add support for responsive variants`
 - `docs: update API documentation`

@@ -35,6 +35,7 @@ find . -name "stitches.config.*" -type f
 Replace Stitches packages in `package.json`:
 
 **Before:**
+
 ```json
 {
   "dependencies": {
@@ -44,6 +45,7 @@ Replace Stitches packages in `package.json`:
 ```
 
 **After:**
+
 ```json
 {
   "dependencies": {
@@ -53,6 +55,7 @@ Replace Stitches packages in `package.json`:
 ```
 
 For core-only usage:
+
 ```json
 {
   "dependencies": {
@@ -67,15 +70,16 @@ Replace import paths throughout the codebase:
 
 ```typescript
 // Before
-import { styled, css, globalCss, keyframes, createTheme } from '@stitches/react';
-import { createStitches } from '@stitches/react';
+import { styled, css, globalCss, keyframes, createTheme } from "@stitches/react";
+import { createStitches } from "@stitches/react";
 
 // After
-import { styled, css, globalCss, keyframes, createTheme } from '@stitches-rsc/react';
-import { createStitches } from '@stitches-rsc/react';
+import { styled, css, globalCss, keyframes, createTheme } from "@stitches-rsc/react";
+import { createStitches } from "@stitches-rsc/react";
 ```
 
 Use sed for bulk replacement:
+
 ```bash
 # macOS
 find . -type f \( -name "*.ts" -o -name "*.tsx" \) -exec sed -i '' "s/@stitches\/react/@stitches-rsc\/react/g" {} +
@@ -94,8 +98,9 @@ pnpm add @stitches-rsc/next-plugin
 ```
 
 Update `next.config.js`:
+
 ```javascript
-const withStitchesRSC = require('@stitches-rsc/next-plugin');
+const withStitchesRSC = require("@stitches-rsc/next-plugin");
 
 module.exports = withStitchesRSC({
   useScope: true,
@@ -112,10 +117,11 @@ pnpm add @stitches-rsc/vite-plugin
 ```
 
 Update `vite.config.ts`:
+
 ```typescript
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import stitchesRSC from '@stitches-rsc/vite-plugin';
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import stitchesRSC from "@stitches-rsc/vite-plugin";
 
 export default defineConfig({
   plugins: [
@@ -135,6 +141,7 @@ export default defineConfig({
 The `getCssText()` function still works but is primarily for SSR. With build plugins, CSS is extracted automatically.
 
 **Before (SSR hydration):**
+
 ```tsx
 // _document.tsx
 <style id="stitches" dangerouslySetInnerHTML={{ __html: getCssText() }} />
@@ -159,11 +166,13 @@ The build plugin converts dynamic values to CSS variables automatically.
 ### Step 6: Verify Migration
 
 1. Run the build to check for errors:
+
    ```bash
    pnpm build
    ```
 
 2. Check generated CSS for proper layer structure:
+
    ```bash
    # Look for @layer declarations in output
    grep -r "@layer stitches" dist/

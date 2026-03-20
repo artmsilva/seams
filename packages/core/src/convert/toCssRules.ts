@@ -1,13 +1,13 @@
-import type { CSSObject, StitchesConfig } from '../types/css.js';
+import type { CSSObject, StitchesConfig } from "../types/css.js";
 
-import { toCamelCase } from './toCamelCase.js';
-import { toHyphenCase } from './toHyphenCase.js';
-import { toPolyfilledValue } from './toPolyfilledValue.js';
-import { toResolvedMediaQueryRanges } from './toResolvedMediaQueryRanges.js';
-import { toResolvedSelectors } from './toResolvedSelectors.js';
-import { toSizingValue } from './toSizingValue.js';
-import { toTailDashed } from './toTailDashed.js';
-import { toTokenizedValue } from './toTokenizedValue.js';
+import { toCamelCase } from "./toCamelCase.js";
+import { toHyphenCase } from "./toHyphenCase.js";
+import { toPolyfilledValue } from "./toPolyfilledValue.js";
+import { toResolvedMediaQueryRanges } from "./toResolvedMediaQueryRanges.js";
+import { toResolvedSelectors } from "./toResolvedSelectors.js";
+import { toSizingValue } from "./toSizingValue.js";
+import { toTailDashed } from "./toTailDashed.js";
+import { toTokenizedValue } from "./toTokenizedValue.js";
 
 /** Comma matcher outside rounded brackets. */
 const comma = /\s*,\s*(?![^()]*\))/;
@@ -69,12 +69,8 @@ export const unitlessProps: Record<string, 1> = {
 /**
  * Converts a CSSOM-compatible rule to a CSS string.
  */
-const toCssString = (
-  declarations: string[],
-  selectors: string[],
-  conditions: string[],
-): string =>
-  `${conditions.map((condition) => `${condition}{`).join('')}${selectors.length ? `${selectors.join(',')}{` : ''}${declarations.join(';')}${selectors.length ? `}` : ''}${Array(conditions.length ? conditions.length + 1 : 0).join('}')}`;
+const toCssString = (declarations: string[], selectors: string[], conditions: string[]): string =>
+  `${conditions.map((condition) => `${condition}{`).join("")}${selectors.length ? `${selectors.join(",")}{` : ""}${declarations.join(";")}${selectors.length ? `}` : ""}${Array(conditions.length ? conditions.length + 1 : 0).join("}")}`;
 
 /**
  * Converts style objects into CSSOM-compatible CSS text strings.
@@ -97,11 +93,7 @@ export const toCssRules = (
   let lastPoly: ((data: string | number) => CSSObject) | null = null;
 
   /** Walks CSS styles and converts them into CSSOM-compatible rules. */
-  const walk = (
-    style: CSSObject,
-    selectors: string[],
-    conditions: string[],
-  ): void => {
+  const walk = (style: CSSObject, selectors: string[], conditions: string[]): void => {
     let name: string;
     let data: unknown;
 
@@ -118,7 +110,7 @@ export const toCssRules = (
 
           /** Whether the current data represents a nesting rule. */
           const isRuleLike =
-            typeof data === 'object' &&
+            typeof data === "object" &&
             data &&
             (data as object).toString === toStringOfObject &&
             (!(camelName in config.utils) || !selectors.length);
@@ -153,7 +145,7 @@ export const toCssRules = (
             // Transform the current name with the configured media at-rule prelude
             const atRuleName = name.slice(1);
             name = toResolvedMediaQueryRanges(
-              atRuleName in config.media ? '@media ' + config.media[atRuleName] : name,
+              atRuleName in config.media ? "@media " + config.media[atRuleName] : name,
             );
           }
 
@@ -181,7 +173,7 @@ export const toCssRules = (
             /** CSS left-hand side value, which may be a specially-formatted custom property. */
             let cssName = name;
             if (!isAtRuleLike && name.charCodeAt(0) === 36) {
-              cssName = `--${toTailDashed(config.prefix)}${name.slice(1).replace(/\$/g, '-')}`;
+              cssName = `--${toTailDashed(config.prefix)}${name.slice(1).replace(/\$/g, "-")}`;
             }
 
             /** CSS right-hand side value. */
@@ -189,16 +181,16 @@ export const toCssRules = (
 
             if (isRuleLike) {
               cssValue = String(data);
-            } else if (typeof data === 'number') {
+            } else if (typeof data === "number") {
               // Replace all non-unitless props that are not custom properties with pixel versions
               cssValue =
                 data && !(camelName in unitlessProps) && cssName.charCodeAt(0) !== 45
-                  ? String(data) + 'px'
+                  ? String(data) + "px"
                   : String(data);
             } else {
               // Replace tokens with stringified primitive values
               cssValue = toTokenizedValue(
-                toSizingValue(camelName, data == null ? '' : String(data)),
+                toSizingValue(camelName, data == null ? "" : String(data)),
                 config.prefix,
                 config.themeMap[camelName],
               );

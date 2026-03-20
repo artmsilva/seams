@@ -8,25 +8,36 @@ Stitches RSC is a zero-runtime replacement for Stitches.js that supports React S
 
 ## Commands
 
+This project uses [Vite+](https://viteplus.dev/) as the unified toolchain. All commands go through `vp`.
+
 ```bash
 # Build all packages (must be done before testing)
-pnpm build
+vp run build
 
 # Run tests
-pnpm test              # Watch mode
-npx vitest run         # Single run
+vp test                # Watch mode
+vp test run            # Single run
 
 # Run a single test file
-npx vitest run packages/core/src/convert/toHash.test.ts
+vp test run packages/core/src/convert/toHash.test.ts
+
+# Format, lint, and type check in one pass
+vp check
+
+# Lint only
+vp lint
+
+# Format only
+vp fmt
 
 # Type check all packages
-pnpm typecheck
+vp run typecheck
 
-# Lint
-pnpm lint
+# Install dependencies
+vp install
 
 # Clean build artifacts
-pnpm clean
+vp run clean
 ```
 
 ## Architecture
@@ -66,6 +77,7 @@ The isomorphic core with no React dependency:
 ### React Package (`@stitches-rsc/react`)
 
 Extends core with React-specific `styled()` function:
+
 - Re-exports everything from `@stitches-rsc/core`
 - Adds `styled()` that wraps `css()` with React component creation and `forwardRef`
 
@@ -83,6 +95,7 @@ Main entry point: `processSource(code, filename, options)` runs the full pipelin
 ### Build Plugins
 
 Both plugins use `processSource` from plugin-common:
+
 - **next-plugin**: Webpack loader (`withStitchesRSC()` config wrapper)
 - **vite-plugin**: Vite transform plugin with virtual CSS module
 
@@ -97,7 +110,7 @@ Both plugins use `processSource` from plugin-common:
        stitches.onevar,    /* Single variant styles */
        stitches.resonevar, /* Responsive variant styles */
        stitches.allvar,    /* Compound variant styles */
-       stitches.inline;    /* css prop styles */
+       stitches.inline; /* css prop styles */
 ```
 
 ### Token Transformation
@@ -107,6 +120,7 @@ Both plugins use `processSource` from plugin-common:
 ### Dynamic CSS Prop
 
 Dynamic values are converted to CSS variables at build time:
+
 ```tsx
 // Input
 <Box css={{ margin: dynamicVal }} />
@@ -128,6 +142,7 @@ Dynamic values are converted to CSS variables at build time:
 ## Testing
 
 Tests are in `*.test.ts` files alongside source files. Key test files:
+
 - `packages/core/src/convert/toHash.test.ts`
 - `packages/core/src/convert/toTokenizedValue.test.ts`
 - `packages/core/src/createStitches.test.ts`
