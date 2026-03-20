@@ -34,7 +34,7 @@ jobs:
         run: vp run build
 
       - name: Build docs
-        run: vp pm --filter @artmsilva/seams-docs build
+        run: cd docs && vp build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
