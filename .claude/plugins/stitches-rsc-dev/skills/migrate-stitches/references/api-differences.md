@@ -4,52 +4,54 @@
 
 These APIs work identically:
 
-| API | Status |
-|-----|--------|
-| `createStitches()` | ✅ Identical |
-| `styled()` | ✅ Identical |
-| `css()` | ✅ Identical |
-| `globalCss()` | ✅ Identical |
-| `keyframes()` | ✅ Identical |
-| `createTheme()` | ✅ Identical |
-| `theme` object | ✅ Identical |
-| Variants | ✅ Identical |
-| Compound variants | ✅ Identical |
-| Default variants | ✅ Identical |
-| Responsive variants | ✅ Identical |
+| API                                 | Status       |
+| ----------------------------------- | ------------ |
+| `createStitches()`                  | ✅ Identical |
+| `styled()`                          | ✅ Identical |
+| `css()`                             | ✅ Identical |
+| `globalCss()`                       | ✅ Identical |
+| `keyframes()`                       | ✅ Identical |
+| `createTheme()`                     | ✅ Identical |
+| `theme` object                      | ✅ Identical |
+| Variants                            | ✅ Identical |
+| Compound variants                   | ✅ Identical |
+| Default variants                    | ✅ Identical |
+| Responsive variants                 | ✅ Identical |
 | Token references (`$color$primary`) | ✅ Identical |
-| Utils | ✅ Identical |
-| Media queries | ✅ Identical |
-| `as` prop | ✅ Identical |
-| Component composition | ✅ Identical |
+| Utils                               | ✅ Identical |
+| Media queries                       | ✅ Identical |
+| `as` prop                           | ✅ Identical |
+| Component composition               | ✅ Identical |
 
 ## Behavioral Differences
 
 ### CSS Generation Timing
 
-| Aspect | Stitches.js | Stitches RSC |
-|--------|-------------|--------------|
-| When CSS generated | Runtime (browser) | Build time |
-| CSS injection | Dynamic `<style>` tags | Static CSS file |
-| Bundle impact | CSS in JS bundle | CSS extracted |
-| RSC compatible | ❌ No | ✅ Yes |
+| Aspect             | Stitches.js            | Stitches RSC    |
+| ------------------ | ---------------------- | --------------- |
+| When CSS generated | Runtime (browser)      | Build time      |
+| CSS injection      | Dynamic `<style>` tags | Static CSS file |
+| Bundle impact      | CSS in JS bundle       | CSS extracted   |
+| RSC compatible     | ❌ No                  | ✅ Yes          |
 
 ### getCssText()
 
-| Aspect | Stitches.js | Stitches RSC |
-|--------|-------------|--------------|
-| Purpose | SSR CSS extraction | Debugging/fallback |
-| Required for SSR | Yes | No (plugin handles it) |
-| Returns | All generated CSS | All generated CSS |
+| Aspect           | Stitches.js        | Stitches RSC           |
+| ---------------- | ------------------ | ---------------------- |
+| Purpose          | SSR CSS extraction | Debugging/fallback     |
+| Required for SSR | Yes                | No (plugin handles it) |
+| Returns          | All generated CSS  | All generated CSS      |
 
 ### css prop with Dynamic Values
 
 **Stitches.js:** Generates CSS at runtime for any value
+
 ```tsx
 <Box css={{ margin: computedValue }} /> // Works, CSS generated in browser
 ```
 
 **Stitches RSC:** Converts to CSS variable at build time
+
 ```tsx
 <Box css={{ margin: computedValue }} />
 // Generates: .class { margin: var(--stitches-dyn-0); }
@@ -59,18 +61,20 @@ These APIs work identically:
 ### Functions in Styles
 
 **Stitches.js:** Functions evaluated at runtime
+
 ```tsx
 // Works in Stitches.js
-const Box = styled('div', {
+const Box = styled("div", {
   color: () => getThemeColor(),
 });
 ```
 
 **Stitches RSC:** Functions not supported (can't serialize at build time)
+
 ```tsx
 // Won't work - use CSS variables instead
-const Box = styled('div', {
-  color: 'var(--dynamic-color)',
+const Box = styled("div", {
+  color: "var(--dynamic-color)",
 });
 ```
 
@@ -87,7 +91,7 @@ All styles are organized into CSS `@layer` for predictable cascade:
        stitches.onevar,    /* Variants */
        stitches.resonevar, /* Responsive variants */
        stitches.allvar,    /* Compound variants */
-       stitches.inline;    /* css prop */
+       stitches.inline; /* css prop */
 ```
 
 ### CSS Scope
@@ -96,11 +100,14 @@ Component styles use `@scope` for isolation:
 
 ```css
 @scope (.c-Button-abc123) {
-  :scope { background: var(--colors-primary); }
+  :scope {
+    background: var(--colors-primary);
+  }
 }
 ```
 
 With Firefox fallback:
+
 ```css
 @supports not (selector(:scope)) {
   .c-Button-abc123:where(.c-Button-abc123) {
@@ -114,8 +121,9 @@ With Firefox fallback:
 ### VariantProps
 
 Identical usage:
+
 ```typescript
-import type { VariantProps } from '@stitches-rsc/react';
+import type { VariantProps } from "@stitches-rsc/react";
 
 type ButtonVariants = VariantProps<typeof Button>;
 ```
@@ -123,8 +131,9 @@ type ButtonVariants = VariantProps<typeof Button>;
 ### CSS Type
 
 Identical usage:
+
 ```typescript
-import type { CSS } from '@stitches-rsc/react';
+import type { CSS } from "@stitches-rsc/react";
 
 interface Props {
   css?: CSS;

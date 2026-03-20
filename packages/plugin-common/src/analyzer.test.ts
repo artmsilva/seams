@@ -1,9 +1,9 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect } from "vite-plus/test";
 
-import { analyzeSource } from './analyzer.js';
+import { analyzeSource } from "./analyzer.js";
 
-describe('analyzeSource', () => {
-  it('detects Stitches imports', () => {
+describe("analyzeSource", () => {
+  it("detects Stitches imports", () => {
     const source = `
       import { styled, css } from '@stitches-rsc/react';
 
@@ -12,12 +12,12 @@ describe('analyzeSource', () => {
       });
     `;
 
-    const result = analyzeSource(source, 'test.tsx');
+    const result = analyzeSource(source, "test.tsx");
 
     expect(result.hasStitchesImport).toBe(true);
   });
 
-  it('detects createStitches usage', () => {
+  it("detects createStitches usage", () => {
     const source = `
       import { createStitches } from '@stitches-rsc/react';
 
@@ -30,15 +30,15 @@ describe('analyzeSource', () => {
       });
     `;
 
-    const result = analyzeSource(source, 'test.tsx');
+    const result = analyzeSource(source, "test.tsx");
 
     expect(result.hasStitchesImport).toBe(true);
     expect(result.configs).toHaveLength(1);
-    expect(result.configs[0]!.exports).toContain('styled');
-    expect(result.configs[0]!.exports).toContain('css');
+    expect(result.configs[0]!.exports).toContain("styled");
+    expect(result.configs[0]!.exports).toContain("css");
   });
 
-  it('detects css() usages', () => {
+  it("detects css() usages", () => {
     const source = `
       import { css } from '@stitches-rsc/core';
 
@@ -48,15 +48,15 @@ describe('analyzeSource', () => {
       });
     `;
 
-    const result = analyzeSource(source, 'test.tsx');
+    const result = analyzeSource(source, "test.tsx");
 
     expect(result.usages).toHaveLength(1);
-    expect(result.usages[0]!.type).toBe('css');
-    expect(result.usages[0]!.name).toBe('button');
+    expect(result.usages[0]!.type).toBe("css");
+    expect(result.usages[0]!.name).toBe("button");
     expect(result.usages[0]!.hasDynamicValues).toBe(false);
   });
 
-  it('detects styled() usages', () => {
+  it("detects styled() usages", () => {
     const source = `
       import { styled } from '@stitches-rsc/react';
 
@@ -65,14 +65,14 @@ describe('analyzeSource', () => {
       });
     `;
 
-    const result = analyzeSource(source, 'test.tsx');
+    const result = analyzeSource(source, "test.tsx");
 
     expect(result.usages).toHaveLength(1);
-    expect(result.usages[0]!.type).toBe('styled');
-    expect(result.usages[0]!.name).toBe('Button');
+    expect(result.usages[0]!.type).toBe("styled");
+    expect(result.usages[0]!.name).toBe("Button");
   });
 
-  it('detects globalCss() usages', () => {
+  it("detects globalCss() usages", () => {
     const source = `
       import { globalCss } from '@stitches-rsc/core';
 
@@ -81,13 +81,13 @@ describe('analyzeSource', () => {
       });
     `;
 
-    const result = analyzeSource(source, 'test.tsx');
+    const result = analyzeSource(source, "test.tsx");
 
     expect(result.usages).toHaveLength(1);
-    expect(result.usages[0]!.type).toBe('globalCss');
+    expect(result.usages[0]!.type).toBe("globalCss");
   });
 
-  it('detects keyframes() usages', () => {
+  it("detects keyframes() usages", () => {
     const source = `
       import { keyframes } from '@stitches-rsc/core';
 
@@ -97,14 +97,14 @@ describe('analyzeSource', () => {
       });
     `;
 
-    const result = analyzeSource(source, 'test.tsx');
+    const result = analyzeSource(source, "test.tsx");
 
     expect(result.usages).toHaveLength(1);
-    expect(result.usages[0]!.type).toBe('keyframes');
-    expect(result.usages[0]!.name).toBe('fadeIn');
+    expect(result.usages[0]!.type).toBe("keyframes");
+    expect(result.usages[0]!.name).toBe("fadeIn");
   });
 
-  it('detects dynamic values', () => {
+  it("detects dynamic values", () => {
     const source = `
       import { css } from '@stitches-rsc/core';
 
@@ -115,13 +115,13 @@ describe('analyzeSource', () => {
       });
     `;
 
-    const result = analyzeSource(source, 'test.tsx');
+    const result = analyzeSource(source, "test.tsx");
 
     expect(result.usages).toHaveLength(1);
     expect(result.usages[0]!.hasDynamicValues).toBe(true);
   });
 
-  it('extracts static styles', () => {
+  it("extracts static styles", () => {
     const source = `
       import { css } from '@stitches-rsc/core';
 
@@ -137,14 +137,14 @@ describe('analyzeSource', () => {
       });
     `;
 
-    const result = analyzeSource(source, 'test.tsx');
+    const result = analyzeSource(source, "test.tsx");
 
     expect(result.usages[0]!.staticStyles).toBeDefined();
-    expect(result.usages[0]!.staticStyles?.['backgroundColor']).toBe('blue');
-    expect(result.usages[0]!.staticStyles?.['variants']).toBeDefined();
+    expect(result.usages[0]!.staticStyles?.["backgroundColor"]).toBe("blue");
+    expect(result.usages[0]!.staticStyles?.["variants"]).toBeDefined();
   });
 
-  it('handles original @stitches packages', () => {
+  it("handles original @stitches packages", () => {
     const source = `
       import { styled } from '@stitches/react';
 
@@ -153,13 +153,13 @@ describe('analyzeSource', () => {
       });
     `;
 
-    const result = analyzeSource(source, 'test.tsx');
+    const result = analyzeSource(source, "test.tsx");
 
     expect(result.hasStitchesImport).toBe(true);
     expect(result.usages).toHaveLength(1);
   });
 
-  it('handles TypeScript files', () => {
+  it("handles TypeScript files", () => {
     const source = `
       import { styled } from '@stitches-rsc/react';
       import type { ComponentProps } from 'react';
@@ -171,7 +171,7 @@ describe('analyzeSource', () => {
       type ButtonProps = ComponentProps<typeof Button>;
     `;
 
-    const result = analyzeSource(source, 'test.tsx');
+    const result = analyzeSource(source, "test.tsx");
 
     expect(result.hasStitchesImport).toBe(true);
     expect(result.usages).toHaveLength(1);

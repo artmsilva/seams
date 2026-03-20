@@ -24,11 +24,11 @@ Run this script to audit a file:
 
 ```typescript
 // check-rsc.ts
-import { analyzeSource } from '@stitches-rsc/plugin-common';
-import { readFileSync } from 'fs';
+import { analyzeSource } from "@stitches-rsc/plugin-common";
+import { readFileSync } from "fs";
 
 const filename = process.argv[2];
-const source = readFileSync(filename, 'utf-8');
+const source = readFileSync(filename, "utf-8");
 
 const issues: string[] = [];
 
@@ -36,7 +36,7 @@ const issues: string[] = [];
 const analysis = analyzeSource(source, filename);
 
 if (analysis.hasStitchesImport) {
-  console.log('✓ Has Stitches import');
+  console.log("✓ Has Stitches import");
 
   for (const usage of analysis.usages) {
     if (usage.hasDynamicValues) {
@@ -49,15 +49,15 @@ if (analysis.hasStitchesImport) {
 
 // Check 2: Client-only patterns
 const clientPatterns = [
-  { pattern: /\buseState\b/, name: 'useState hook' },
-  { pattern: /\buseEffect\b/, name: 'useEffect hook' },
-  { pattern: /\buseLayoutEffect\b/, name: 'useLayoutEffect hook' },
-  { pattern: /\buseRef\b/, name: 'useRef hook' },
-  { pattern: /\bwindow\b/, name: 'window object' },
-  { pattern: /\bdocument\b/, name: 'document object' },
-  { pattern: /\blocalStorage\b/, name: 'localStorage' },
-  { pattern: /\bsessionStorage\b/, name: 'sessionStorage' },
-  { pattern: /\baddEventListener\b/, name: 'addEventListener' },
+  { pattern: /\buseState\b/, name: "useState hook" },
+  { pattern: /\buseEffect\b/, name: "useEffect hook" },
+  { pattern: /\buseLayoutEffect\b/, name: "useLayoutEffect hook" },
+  { pattern: /\buseRef\b/, name: "useRef hook" },
+  { pattern: /\bwindow\b/, name: "window object" },
+  { pattern: /\bdocument\b/, name: "document object" },
+  { pattern: /\blocalStorage\b/, name: "localStorage" },
+  { pattern: /\bsessionStorage\b/, name: "sessionStorage" },
+  { pattern: /\baddEventListener\b/, name: "addEventListener" },
 ];
 
 const hasUseClient = source.includes("'use client'") || source.includes('"use client"');
@@ -74,20 +74,21 @@ for (const { pattern, name } of clientPatterns) {
 
 // Check 3: getCssText usage
 if (/getCssText\(\)/.test(source)) {
-  console.log('⚠ getCssText() used - ensure this is for SSR fallback only');
+  console.log("⚠ getCssText() used - ensure this is for SSR fallback only");
 }
 
 // Summary
-console.log('\n--- Summary ---');
+console.log("\n--- Summary ---");
 if (issues.length === 0) {
-  console.log('✓ File appears RSC-compatible');
+  console.log("✓ File appears RSC-compatible");
 } else {
-  console.log('Issues found:');
-  issues.forEach(issue => console.log(`  ${issue}`));
+  console.log("Issues found:");
+  issues.forEach((issue) => console.log(`  ${issue}`));
 }
 ```
 
 Run with:
+
 ```bash
 npx tsx check-rsc.ts src/components/Button.tsx
 ```
@@ -105,9 +106,9 @@ grep -rn "useState\|useEffect\|window\.|document\." src/components/ --include="*
 
 ```typescript
 // RSC-compatible - CSS extracted at build time
-const Button = styled('button', {
-  backgroundColor: '$primary',
-  padding: '$2 $4',
+const Button = styled("button", {
+  backgroundColor: "$primary",
+  padding: "$2 $4",
 });
 ```
 
@@ -115,11 +116,11 @@ const Button = styled('button', {
 
 ```typescript
 // RSC-compatible - all variants extracted at build time
-const Button = styled('button', {
+const Button = styled("button", {
   variants: {
     size: {
-      sm: { padding: '$1 $2' },
-      lg: { padding: '$3 $6' },
+      sm: { padding: "$1 $2" },
+      lg: { padding: "$3 $6" },
     },
   },
 });
@@ -137,10 +138,10 @@ const Button = styled('button', {
 
 ```typescript
 // RSC-compatible - tokens resolved at build time
-const Card = styled('div', {
-  backgroundColor: '$colors$background',
-  borderRadius: '$radii$lg',
-  boxShadow: '$shadows$md',
+const Card = styled("div", {
+  backgroundColor: "$colors$background",
+  borderRadius: "$radii$lg",
+  boxShadow: "$shadows$md",
 });
 ```
 
@@ -150,13 +151,13 @@ const Card = styled('div', {
 
 ```typescript
 // NOT RSC-compatible - function can't be serialized
-const Box = styled('div', {
+const Box = styled("div", {
   color: () => getColor(), // Build error
 });
 
 // Fix: Use CSS variable
-const Box = styled('div', {
-  color: 'var(--dynamic-color)',
+const Box = styled("div", {
+  color: "var(--dynamic-color)",
 });
 ```
 
@@ -239,21 +240,23 @@ components/
 ```
 
 **Button.tsx (Server):**
-```typescript
-import { styled } from '@stitches-rsc/react';
 
-export const ButtonBase = styled('button', {
-  backgroundColor: '$primary',
+```typescript
+import { styled } from "@stitches-rsc/react";
+
+export const ButtonBase = styled("button", {
+  backgroundColor: "$primary",
   variants: {
     size: {
-      sm: { padding: '$1 $2' },
-      lg: { padding: '$3 $6' },
+      sm: { padding: "$1 $2" },
+      lg: { padding: "$3 $6" },
     },
   },
 });
 ```
 
 **Button.client.tsx (Client):**
+
 ```typescript
 'use client';
 
@@ -281,6 +284,7 @@ Add `'use client'` directive at the top of the file.
 ### "window is not defined"
 
 The code is running on the server. Either:
+
 1. Add `'use client'` directive
 2. Use `typeof window !== 'undefined'` guard
 3. Move to `useEffect`
@@ -288,6 +292,7 @@ The code is running on the server. Either:
 ### "Styles not applying in production"
 
 Verify the build plugin is configured and CSS is being extracted:
+
 ```bash
 pnpm build
 cat dist/stitches.css | head -50

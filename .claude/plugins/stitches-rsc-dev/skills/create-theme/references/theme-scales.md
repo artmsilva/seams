@@ -4,30 +4,30 @@
 
 The `defaultThemeMap` automatically maps CSS properties to theme scales. When you use a token like `$primary`, it resolves based on which CSS property it's used with.
 
-| CSS Property | Theme Scale |
-|--------------|-------------|
-| `background`, `backgroundColor` | `colors` |
-| `border`, `borderColor`, `borderTopColor`, `borderRightColor`, `borderBottomColor`, `borderLeftColor` | `colors` |
-| `color`, `fill`, `stroke`, `caretColor` | `colors` |
-| `outlineColor`, `accentColor` | `colors` |
-| `boxShadow`, `textShadow` | `shadows` |
-| `fontFamily` | `fonts` |
-| `fontSize` | `fontSizes` |
-| `fontWeight` | `fontWeights` |
-| `lineHeight` | `lineHeights` |
-| `letterSpacing` | `letterSpacings` |
-| `margin`, `marginTop`, `marginRight`, `marginBottom`, `marginLeft` | `space` |
-| `padding`, `paddingTop`, `paddingRight`, `paddingBottom`, `paddingLeft` | `space` |
-| `gap`, `rowGap`, `columnGap` | `space` |
-| `top`, `right`, `bottom`, `left`, `inset` | `space` |
-| `width`, `minWidth`, `maxWidth` | `sizes` |
-| `height`, `minHeight`, `maxHeight` | `sizes` |
-| `flexBasis` | `sizes` |
-| `borderRadius`, `borderTopLeftRadius`, `borderTopRightRadius`, `borderBottomRightRadius`, `borderBottomLeftRadius` | `radii` |
-| `borderWidth`, `borderTopWidth`, `borderRightWidth`, `borderBottomWidth`, `borderLeftWidth` | `borderWidths` |
-| `borderStyle`, `borderTopStyle`, `borderRightStyle`, `borderBottomStyle`, `borderLeftStyle` | `borderStyles` |
-| `zIndex` | `zIndices` |
-| `transition`, `transitionDuration` | `transitions` |
+| CSS Property                                                                                                       | Theme Scale      |
+| ------------------------------------------------------------------------------------------------------------------ | ---------------- |
+| `background`, `backgroundColor`                                                                                    | `colors`         |
+| `border`, `borderColor`, `borderTopColor`, `borderRightColor`, `borderBottomColor`, `borderLeftColor`              | `colors`         |
+| `color`, `fill`, `stroke`, `caretColor`                                                                            | `colors`         |
+| `outlineColor`, `accentColor`                                                                                      | `colors`         |
+| `boxShadow`, `textShadow`                                                                                          | `shadows`        |
+| `fontFamily`                                                                                                       | `fonts`          |
+| `fontSize`                                                                                                         | `fontSizes`      |
+| `fontWeight`                                                                                                       | `fontWeights`    |
+| `lineHeight`                                                                                                       | `lineHeights`    |
+| `letterSpacing`                                                                                                    | `letterSpacings` |
+| `margin`, `marginTop`, `marginRight`, `marginBottom`, `marginLeft`                                                 | `space`          |
+| `padding`, `paddingTop`, `paddingRight`, `paddingBottom`, `paddingLeft`                                            | `space`          |
+| `gap`, `rowGap`, `columnGap`                                                                                       | `space`          |
+| `top`, `right`, `bottom`, `left`, `inset`                                                                          | `space`          |
+| `width`, `minWidth`, `maxWidth`                                                                                    | `sizes`          |
+| `height`, `minHeight`, `maxHeight`                                                                                 | `sizes`          |
+| `flexBasis`                                                                                                        | `sizes`          |
+| `borderRadius`, `borderTopLeftRadius`, `borderTopRightRadius`, `borderBottomRightRadius`, `borderBottomLeftRadius` | `radii`          |
+| `borderWidth`, `borderTopWidth`, `borderRightWidth`, `borderBottomWidth`, `borderLeftWidth`                        | `borderWidths`   |
+| `borderStyle`, `borderTopStyle`, `borderRightStyle`, `borderBottomStyle`, `borderLeftStyle`                        | `borderStyles`   |
+| `zIndex`                                                                                                           | `zIndices`       |
+| `transition`, `transitionDuration`                                                                                 | `transitions`    |
 
 ## Explicit Scale References
 
@@ -48,6 +48,7 @@ Use explicit scale references with `$scale$token`:
 ## Complete Scale Definitions
 
 ### colors
+
 ```typescript
 colors: {
   // Brand
@@ -86,6 +87,7 @@ colors: {
 ```
 
 ### space
+
 ```typescript
 space: {
   0: '0',
@@ -129,6 +131,7 @@ space: {
 ### sizes
 
 Same as `space`, plus:
+
 ```typescript
 sizes: {
   // Container widths
@@ -161,6 +164,7 @@ sizes: {
 ```
 
 ### fontSizes
+
 ```typescript
 fontSizes: {
   xs: '0.75rem',     // 12px
@@ -180,6 +184,7 @@ fontSizes: {
 ```
 
 ### fontWeights
+
 ```typescript
 fontWeights: {
   thin: '100',
@@ -195,6 +200,7 @@ fontWeights: {
 ```
 
 ### lineHeights
+
 ```typescript
 lineHeights: {
   none: '1',
@@ -215,6 +221,7 @@ lineHeights: {
 ```
 
 ### letterSpacings
+
 ```typescript
 letterSpacings: {
   tighter: '-0.05em',
@@ -227,6 +234,7 @@ letterSpacings: {
 ```
 
 ### radii
+
 ```typescript
 radii: {
   none: '0px',
@@ -242,6 +250,7 @@ radii: {
 ```
 
 ### shadows
+
 ```typescript
 shadows: {
   none: 'none',
@@ -256,6 +265,7 @@ shadows: {
 ```
 
 ### zIndices
+
 ```typescript
 zIndices: {
   hide: '-1',
@@ -275,6 +285,7 @@ zIndices: {
 ```
 
 ### transitions
+
 ```typescript
 transitions: {
   none: 'none',
@@ -287,6 +298,7 @@ transitions: {
 ```
 
 ### borderWidths
+
 ```typescript
 borderWidths: {
   0: '0px',
@@ -298,6 +310,7 @@ borderWidths: {
 ```
 
 ### borderStyles
+
 ```typescript
 borderStyles: {
   solid: 'solid',

@@ -1,7 +1,7 @@
-import type * as CSS from 'csstype';
+import type * as CSS from "csstype";
 
-import type { CSSObject, MediaConfig, ThemeConfig, ThemeMapConfig, UtilsConfig } from './css.js';
-import type { Token } from './theme.js';
+import type { CSSObject, MediaConfig, ThemeConfig, ThemeMapConfig, UtilsConfig } from "./css.js";
+import type { Token } from "./theme.js";
 
 /**
  * CSS type with media queries and theme tokens.
@@ -88,7 +88,10 @@ export interface KeyframesFunctionType {
  * Create theme function type.
  */
 export interface CreateThemeFunctionType<Theme extends ThemeConfig = ThemeConfig> {
-  (nameOrTheme: string | Theme, theme?: Theme): string & {
+  (
+    nameOrTheme: string | Theme,
+    theme?: Theme,
+  ): string & {
     className: string;
     selector: string;
   } & {
@@ -102,7 +105,7 @@ export interface CreateThemeFunctionType<Theme extends ThemeConfig = ThemeConfig
  * Full Stitches configuration type.
  */
 export interface StitchesConfigType<
-  Prefix extends string = '',
+  Prefix extends string = "",
   Media extends MediaConfig = MediaConfig,
   Theme extends ThemeConfig = ThemeConfig,
   ThemeMap extends ThemeMapConfig = ThemeMapConfig,

@@ -1,11 +1,11 @@
-import type { CSSObject } from '../types/css.js';
+import type { CSSObject } from "../types/css.js";
 
 const splitBySpace = /\s+(?![^()]*\))/;
 
 const split =
   <T extends (...args: string[]) => CSSObject>(fn: T) =>
   (data: string | number): CSSObject =>
-    fn(...(typeof data === 'string' ? String(data).split(splitBySpace) : [String(data)]));
+    fn(...(typeof data === "string" ? String(data).split(splitBySpace) : [String(data)]));
 
 /**
  * Property polyfills that transform values into cross-browser compatible CSS.

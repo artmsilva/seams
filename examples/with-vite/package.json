@@ -1,0 +1,27 @@
+{
+  "name": "@stitches-rsc/example-vite",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vp dev",
+    "build": "vp build",
+    "preview": "vp preview"
+  },
+  "dependencies": {
+    "@stitches-rsc/react": "workspace:*",
+    "@stitches-rsc/vite-plugin": "workspace:*",
+    "@vitejs/plugin-react": "^4.5.2",
+    "react": "catalog:",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "catalog:",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  }
+}

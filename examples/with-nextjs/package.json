@@ -1,0 +1,26 @@
+{
+  "name": "@stitches-rsc/example-nextjs",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev --webpack",
+    "build": "next build --webpack",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@stitches-rsc/next-plugin": "workspace:*",
+    "@stitches-rsc/react": "workspace:*",
+    "next": "^16.0.0",
+    "react": "catalog:",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "typescript": "catalog:"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  }
+}

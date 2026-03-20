@@ -11,6 +11,7 @@
 If you discover a security vulnerability, please report it by emailing the maintainers directly rather than opening a public issue.
 
 Please include:
+
 - Description of the vulnerability
 - Steps to reproduce
 - Potential impact

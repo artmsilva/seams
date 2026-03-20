@@ -1,10 +1,6 @@
-import React from 'react';
+import React from "react";
 
-import {
-  createCssFunction,
-  createMemo,
-  internal,
-} from '@stitches-rsc/core';
+import { createCssFunction, createMemo, internal } from "@stitches-rsc/core";
 import type {
   ComponentConfig,
   CssComponent,
@@ -12,7 +8,7 @@ import type {
   Sheet,
   StitchesConfig,
   StyleConfig,
-} from '@stitches-rsc/core';
+} from "@stitches-rsc/core";
 
 const createStyledFunctionMap = createMemo<StyledFn, []>();
 
@@ -39,8 +35,8 @@ export interface StyledComponent<
   T extends React.ElementType = React.ElementType,
   P = object,
 > extends React.ForwardRefExoticComponent<
-    React.PropsWithoutRef<StyledComponentProps & P> & React.RefAttributes<unknown>
-  > {
+  React.PropsWithoutRef<StyledComponentProps & P> & React.RefAttributes<unknown>
+> {
   /** The base CSS class name */
   className: string;
   /** The display name for React DevTools */
@@ -103,33 +99,31 @@ export const createStyledFunction = ({ config, sheet }: StyledConfig): StyledFn 
 
       const internalData = cssComponent[internal];
       const DefaultType = internalData.type as T;
-      const shouldForwardAs = shouldForwardStitchesProp?.('as');
+      const shouldForwardAs = shouldForwardStitchesProp?.("as");
 
-      const styledComponent = React.forwardRef<unknown, StyledComponentProps>(
-        (props, ref) => {
-          const Type =
-            props?.['as'] && !shouldForwardAs ? (props['as'] as React.ElementType) : DefaultType;
+      const styledComponent = React.forwardRef<unknown, StyledComponentProps>((props, ref) => {
+        const Type =
+          props?.["as"] && !shouldForwardAs ? (props["as"] as React.ElementType) : DefaultType;
 
-          const { props: forwardProps, deferredInjector } = cssComponent(props);
+        const { props: forwardProps, deferredInjector } = cssComponent(props);
 
-          if (!shouldForwardAs) {
-            delete forwardProps['as'];
-          }
+        if (!shouldForwardAs) {
+          delete forwardProps["as"];
+        }
 
-          forwardProps['ref'] = ref;
+        forwardProps["ref"] = ref;
 
-          if (deferredInjector) {
-            return React.createElement(
-              React.Fragment,
-              null,
-              React.createElement(Type as React.ElementType, forwardProps),
-              React.createElement(deferredInjector, null),
-            );
-          }
+        if (deferredInjector) {
+          return React.createElement(
+            React.Fragment,
+            null,
+            React.createElement(Type as React.ElementType, forwardProps),
+            React.createElement(deferredInjector, null),
+          );
+        }
 
-          return React.createElement(Type as React.ElementType, forwardProps);
-        },
-      );
+        return React.createElement(Type as React.ElementType, forwardProps);
+      });
 
       const toString = () => cssComponent.selector;
 

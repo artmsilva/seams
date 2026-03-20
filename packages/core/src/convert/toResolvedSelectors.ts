@@ -15,7 +15,7 @@ export const toResolvedSelectors = (
     ? parentSelectors.reduce<string[]>((resolvedSelectors, parentSelector) => {
         resolvedSelectors.push(
           ...nestedSelectors.map((selector) =>
-            selector.includes('&')
+            selector.includes("&")
               ? selector.replace(
                   /&/g,
                   // If parent has combinators and selector has multiple &, wrap in :is()
@@ -23,7 +23,7 @@ export const toResolvedSelectors = (
                     ? `:is(${parentSelector})`
                     : parentSelector,
                 )
-              : parentSelector + ' ' + selector,
+              : parentSelector + " " + selector,
           ),
         );
 

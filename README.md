@@ -29,17 +29,17 @@ pnpm add @stitches-rsc/vite-plugin
 ## Usage
 
 ```tsx
-import { styled, css } from '@stitches-rsc/react';
+import { styled, css } from "@stitches-rsc/react";
 
-const Button = styled('button', {
-  backgroundColor: '$primary',
-  borderRadius: '8px',
-  padding: '10px 20px',
+const Button = styled("button", {
+  backgroundColor: "$primary",
+  borderRadius: "8px",
+  padding: "10px 20px",
 
   variants: {
     size: {
-      small: { fontSize: '14px' },
-      large: { fontSize: '18px' },
+      small: { fontSize: "14px" },
+      large: { fontSize: "18px" },
     },
   },
 });
@@ -51,12 +51,12 @@ export default function App() {
 
 ## Packages
 
-| Package | Description |
-|---------|-------------|
-| `@stitches-rsc/core` | Isomorphic API (no React dependency) |
-| `@stitches-rsc/react` | React bindings with `styled()` function |
-| `@stitches-rsc/next-plugin` | Next.js webpack loader |
-| `@stitches-rsc/vite-plugin` | Vite transform plugin |
+| Package                     | Description                             |
+| --------------------------- | --------------------------------------- |
+| `@stitches-rsc/core`        | Isomorphic API (no React dependency)    |
+| `@stitches-rsc/react`       | React bindings with `styled()` function |
+| `@stitches-rsc/next-plugin` | Next.js webpack loader                  |
+| `@stitches-rsc/vite-plugin` | Vite transform plugin                   |
 
 ## How It Works
 
@@ -98,31 +98,33 @@ Styles are organized into layers for predictable cascade ordering:
        stitches.onevar,    /* Single variant styles */
        stitches.resonevar, /* Responsive variant styles */
        stitches.allvar,    /* Compound variant styles */
-       stitches.inline;    /* css prop styles */
+       stitches.inline; /* css prop styles */
 ```
 
 ## Development
 
+This project uses [Vite+](https://viteplus.dev/) as the unified toolchain.
+
 ```bash
 # Install dependencies
-pnpm install
+vp install
 
 # Build all packages
-pnpm build
+vp run build
 
 # Run tests
-pnpm test
+vp test
 
-# Type check
-pnpm typecheck
+# Format, lint, and type check
+vp check
 
-# Lint
-pnpm lint
+# Type check only
+vp run typecheck
 ```
 
 ## Requirements
 
-- Node.js >= 18.0.0
+- Node.js >= 24.0.0
 - React 18.3+ or 19+
 
 ## License

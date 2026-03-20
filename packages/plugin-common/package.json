@@ -2,7 +2,24 @@
   "name": "@stitches-rsc/plugin-common",
   "version": "0.1.0",
   "description": "Shared build plugin logic for Stitches RSC",
+  "keywords": [
+    "build-plugin",
+    "css-extraction",
+    "css-in-js",
+    "rsc",
+    "stitches"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stitches-rsc/stitches-rsc.git",
+    "directory": "packages/plugin-common"
+  },
+  "files": [
+    "dist"
+  ],
   "type": "module",
+  "sideEffects": false,
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -18,7 +35,6 @@
       }
     }
   },
-  "files": ["dist"],
   "scripts": {
     "build": "tsup && tsc --emitDeclarationOnly --declaration --outDir dist",
     "dev": "tsup --watch",
@@ -26,26 +42,21 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@babel/core": "^7.24.0",
-    "@babel/generator": "^7.24.0",
-    "@babel/parser": "^7.24.0",
-    "@babel/traverse": "^7.24.0",
-    "@babel/types": "^7.24.0",
+    "@babel/core": "catalog:",
+    "@babel/generator": "catalog:",
+    "@babel/parser": "catalog:",
+    "@babel/traverse": "catalog:",
+    "@babel/types": "catalog:",
     "@stitches-rsc/core": "workspace:*"
   },
   "devDependencies": {
-    "@types/babel__core": "^7.20.0",
-    "@types/babel__generator": "^7.6.0",
-    "@types/babel__traverse": "^7.20.0",
-    "tsup": "^8.0.0",
-    "typescript": "^5.4.0"
+    "@types/babel__core": "catalog:",
+    "@types/babel__generator": "catalog:",
+    "@types/babel__traverse": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:"
   },
-  "sideEffects": false,
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/stitches-rsc/stitches-rsc.git",
-    "directory": "packages/plugin-common"
-  },
-  "keywords": ["css-in-js", "stitches", "rsc", "build-plugin", "css-extraction"]
+  "engines": {
+    "node": ">=24.0.0"
+  }
 }
