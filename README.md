@@ -1,4 +1,15 @@
-# Seams
+<p align="center">
+  <img src=".github/banner.svg" alt="Seams — Zero-runtime CSS-in-JS for React Server Components" width="100%" />
+</p>
+
+<p align="center">
+  <a href="https://artmsilva.github.io/seams/">Documentation</a> &bull;
+  <a href="#installation">Installation</a> &bull;
+  <a href="#usage">Usage</a> &bull;
+  <a href="https://github.com/artmsilva/seams/tree/main/examples">Examples</a>
+</p>
+
+---
 
 Zero-runtime CSS-in-JS for React Server Components, inspired by [Stitches.js](https://stitches.dev).
 
