@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev --webpack",
-    "build": "echo 'Skipping Next.js build — Stitches RSC SSR support is WIP. Use dev mode to test.'",
+    "build": "next build --webpack",
     "start": "next start"
   },
   "dependencies": {
