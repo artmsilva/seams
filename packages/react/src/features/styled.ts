@@ -111,7 +111,12 @@ export const createStyledFunction = ({ config, sheet }: StyledConfig): StyledFn 
         const Type =
           props?.["as"] && !shouldForwardAs ? (props["as"] as React.ElementType) : DefaultType;
 
-        const { props: forwardProps, deferredInjector, cssText } = cssComponent(props);
+        const {
+          props: forwardProps,
+          deferredInjector,
+          cssText,
+          className: renderedClassName,
+        } = cssComponent(props);
 
         if (!shouldForwardAs) {
           delete forwardProps["as"];
@@ -121,12 +126,12 @@ export const createStyledFunction = ({ config, sheet }: StyledConfig): StyledFn 
 
         const element = React.createElement(Type as React.ElementType, forwardProps);
 
+        // Use rendered className (includes css prop hash) for unique href.
+        // This ensures each unique css prop gets its own <style> tag.
+        const styleHref = `seams-${renderedClassName.replace(/\s+/g, "-")}`;
+
         // React 19 <style href precedence>: hoists to <head>, deduplicates
         // by href, blocks rendering until processed. Works in RSC without JS.
-        //
-        // Strategy: use STABLE hrefs for theme/global CSS so React deduplicates
-        // them to a single copy regardless of how many components emit them.
-        // Use per-component hrefs for component-specific CSS.
         const children: React.ReactNode[] = [];
 
         // 1. Layer order declaration (deduplicated — same href from every component)
@@ -165,12 +170,12 @@ export const createStyledFunction = ({ config, sheet }: StyledConfig): StyledFn 
           );
         }
 
-        // 4. This component's own CSS (unique href per component)
+        // 4. This component's own CSS (unique href per render — includes css prop hash)
         if (cssText) {
           children.push(
             React.createElement("style", {
-              key: `seams-${cssComponent.className}`,
-              href: `seams-${cssComponent.className}`,
+              key: styleHref,
+              href: styleHref,
               precedence: "seams-03-styled",
               children: cssText,
             }),
