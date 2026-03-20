@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { styled } from "../seams.config";
+import { CopyButton } from "./CopyButton";
 
 const Wrapper = styled("div", {
   position: "relative",
@@ -27,33 +27,6 @@ const Code = styled("code", {
   transition: "color 0.2s ease",
 });
 
-const CopyButton = styled("button", {
-  position: "absolute",
-  top: "$2",
-  right: "$2",
-  padding: "$1 $3",
-  fontSize: "$xs",
-  fontFamily: "$mono",
-  fontWeight: "$medium",
-  color: "$textMuted",
-  backgroundColor: "$bgMuted",
-  border: "1px solid $border",
-  borderRadius: "$md",
-  cursor: "pointer",
-  transition: "color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease",
-  opacity: 0,
-
-  "&:hover": {
-    color: "$text",
-    backgroundColor: "$bgElevated",
-    borderColor: "$textMuted",
-  },
-
-  [`${Wrapper}:hover &`]: {
-    opacity: 1,
-  },
-});
-
 const Label = styled("div", {
   fontSize: "$xs",
   fontFamily: "$mono",
@@ -65,18 +38,10 @@ const Label = styled("div", {
 });
 
 export function CodeBlock({ children, label }: { children: string; label?: string }) {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = () => {
-    void navigator.clipboard.writeText(children.trim());
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
   return (
     <Wrapper>
       {label && <Label>{label}</Label>}
-      <CopyButton onClick={handleCopy}>{copied ? "Copied!" : "Copy"}</CopyButton>
+      <CopyButton text={children} />
       <Pre>
         <Code>{children.trim()}</Code>
       </Pre>

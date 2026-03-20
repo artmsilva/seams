@@ -1,4 +1,5 @@
 import { styled } from "../seams.config";
+import { ThemeToggle } from "./ThemeToggle";
 
 const HeaderBar = styled("header", {
   position: "sticky",
@@ -43,27 +44,6 @@ const GitHubLink = styled("a", {
   },
 });
 
-const ThemeToggle = styled("button", {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  width: "36px",
-  height: "36px",
-  borderRadius: "$md",
-  border: "1px solid $border",
-  backgroundColor: "transparent",
-  color: "$textSecondary",
-  fontSize: "$lg",
-  cursor: "pointer",
-  transition: "color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease",
-
-  "&:hover": {
-    color: "$text",
-    borderColor: "$textMuted",
-    backgroundColor: "$bgMuted",
-  },
-});
-
 const VersionBadge = styled("span", {
   fontSize: "$xs",
   fontWeight: "$medium",
@@ -74,7 +54,7 @@ const VersionBadge = styled("span", {
   border: "1px solid $border",
 });
 
-export function Header({ isDark, onToggleTheme }: { isDark: boolean; onToggleTheme: () => void }) {
+export function Header() {
   return (
     <HeaderBar>
       <HeaderActions>
@@ -86,9 +66,7 @@ export function Header({ isDark, onToggleTheme }: { isDark: boolean; onToggleThe
         >
           GitHub
         </GitHubLink>
-        <ThemeToggle onClick={onToggleTheme} aria-label="Toggle theme">
-          {isDark ? "\u2600" : "\u263E"}
-        </ThemeToggle>
+        <ThemeToggle />
       </HeaderActions>
     </HeaderBar>
   );

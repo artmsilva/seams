@@ -37,12 +37,12 @@ jobs:
         run: vp run build
 
       - name: Build docs
-        run: cd docs && vp build
+        run: cd docs && npx waku build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: docs/dist
+          path: docs/dist/public
 
   deploy:
     needs: build

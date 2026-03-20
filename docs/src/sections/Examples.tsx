@@ -1,6 +1,49 @@
+"use client";
+
 import { useState } from "react";
 import { styled, keyframes } from "../seams.config";
-import { Section, SubHeading, Paragraph } from "../components/Section";
+
+const ExamplesSection = styled("section", {
+  padding: "$8 $7",
+  borderBottom: "1px solid $borderSubtle",
+  maxWidth: "840px",
+  transition: "border-color 0.2s ease",
+
+  "@media (max-width: 767px)": {
+    padding: "$7 $4",
+  },
+});
+
+const SectionHeading = styled("h2", {
+  fontSize: "$3xl",
+  fontWeight: "$bold",
+  color: "$text",
+  marginBottom: "$6",
+  lineHeight: "$tight",
+  transition: "color 0.2s ease",
+
+  "@media (max-width: 767px)": {
+    fontSize: "$2xl",
+  },
+});
+
+const SubHeading = styled("h3", {
+  fontSize: "$xl",
+  fontWeight: "$semibold",
+  color: "$text",
+  marginTop: "$7",
+  marginBottom: "$3",
+  transition: "color 0.2s ease",
+});
+
+const Paragraph = styled("p", {
+  fontSize: "$base",
+  lineHeight: "$relaxed",
+  color: "$textSecondary",
+  marginBottom: "$4",
+  maxWidth: "680px",
+  transition: "color 0.2s ease",
+});
 
 const DemoArea = styled("div", {
   padding: "$6",
@@ -198,7 +241,8 @@ export function Examples() {
   const colors: ButtonColor[] = ["brand", "accent", "success", "outline"];
 
   return (
-    <Section id="examples" title="Examples">
+    <ExamplesSection id="examples">
+      <SectionHeading>Examples</SectionHeading>
       <Paragraph>
         These interactive demos are built with Seams -- the same library powering all the styles on
         this documentation site.
@@ -274,6 +318,6 @@ export function Examples() {
           Next.js example
         </RepoLink>
       </LinkRow>
-    </Section>
+    </ExamplesSection>
   );
 }

@@ -47,16 +47,6 @@ const NavLink = styled("a", {
     color: "$text",
     backgroundColor: "$bgMuted",
   },
-
-  variants: {
-    active: {
-      true: {
-        color: "$brand",
-        borderLeftColor: "$brand",
-        backgroundColor: "$bgMuted",
-      },
-    },
-  },
 });
 
 interface NavItem {
@@ -96,6 +86,7 @@ const navSections: NavSection[] = [
       { label: "Theming", href: "#theming" },
       { label: "Build Plugins", href: "#plugins" },
       { label: "Lit Integration", href: "#lit-integration" },
+      { label: "React Server Components", href: "#rsc" },
     ],
   },
   {
@@ -104,13 +95,7 @@ const navSections: NavSection[] = [
   },
 ];
 
-export function Sidebar({
-  activeSection,
-  onNavClick,
-}: {
-  activeSection: string;
-  onNavClick: () => void;
-}) {
+export function Sidebar() {
   return (
     <Nav>
       <LogoArea>
@@ -121,12 +106,7 @@ export function Sidebar({
         <div key={section.title}>
           <SectionLabel>{section.title}</SectionLabel>
           {section.items.map((item) => (
-            <NavLink
-              key={item.href}
-              href={item.href}
-              active={activeSection === item.href.slice(1)}
-              onClick={onNavClick}
-            >
+            <NavLink key={item.href} href={item.href}>
               {item.label}
             </NavLink>
           ))}

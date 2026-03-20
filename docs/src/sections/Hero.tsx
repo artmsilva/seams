@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { styled, keyframes } from "../seams.config";
+import { CopyButton } from "../components/CopyButton";
 
 const fadeUp = keyframes({
   from: { opacity: 0, transform: "translateY(20px)" },
@@ -61,6 +61,7 @@ const Tagline = styled("p", {
 });
 
 const InstallBox = styled("div", {
+  position: "relative",
   display: "inline-flex",
   alignItems: "center",
   gap: "$3",
@@ -77,24 +78,6 @@ const InstallBox = styled("div", {
 const InstallPrefix = styled("span", {
   color: "$textMuted",
   userSelect: "none",
-});
-
-const CopyBtn = styled("button", {
-  padding: "$1 $2",
-  fontSize: "$xs",
-  fontFamily: "$mono",
-  fontWeight: "$medium",
-  color: "$textMuted",
-  backgroundColor: "transparent",
-  border: "1px solid $border",
-  borderRadius: "$sm",
-  cursor: "pointer",
-  transition: "color 0.15s ease, border-color 0.15s ease",
-
-  "&:hover": {
-    color: "$text",
-    borderColor: "$textMuted",
-  },
 });
 
 const FeatureRow = styled("div", {
@@ -131,14 +114,6 @@ const FeatureDot = styled("span", {
 const installCommand = "npm install @artmsilva/seams-react";
 
 export function Hero() {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = () => {
-    void navigator.clipboard.writeText(installCommand);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
   return (
     <HeroSection id="hero">
       <GradientBg />
@@ -151,7 +126,7 @@ export function Hero() {
         <InstallBox>
           <InstallPrefix>$</InstallPrefix>
           <span>{installCommand}</span>
-          <CopyBtn onClick={handleCopy}>{copied ? "Copied!" : "Copy"}</CopyBtn>
+          <CopyButton text={installCommand} />
         </InstallBox>
         <FeatureRow>
           <Feature>
