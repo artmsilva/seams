@@ -39,6 +39,23 @@ jobs:
       - name: Build docs
         run: cd docs && npx waku build
 
+      - name: Build Vite example
+        run: cd examples/with-vite && DEPLOY_BASE=/seams/examples/vite/ vp build
+        env:
+          DEPLOY_BASE: /seams/examples/vite/
+
+      - name: Build Next.js example
+        run: cd examples/with-nextjs && DEPLOY_BASE=/seams/examples/nextjs next build --webpack
+        env:
+          DEPLOY_BASE: /seams/examples/nextjs
+
+      - name: Assemble site
+        run: |
+          mkdir -p docs/dist/public/examples/vite
+          mkdir -p docs/dist/public/examples/nextjs
+          cp -r examples/with-vite/dist/* docs/dist/public/examples/vite/
+          cp -r examples/with-nextjs/out/* docs/dist/public/examples/nextjs/
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
         with:
