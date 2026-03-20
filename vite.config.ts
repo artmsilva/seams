@@ -9,9 +9,5 @@ export default defineConfig({
       typeAware: true,
       typeCheck: true,
     },
-    ignorePatterns: ["vendor/**"],
-  },
-  fmt: {
-    ignore: ["vendor/**"],
   },
 });
