@@ -20,6 +20,7 @@ catalog:
   "@types/react": ^19.0.0
   react: ^19.0.0
   csstype: ^3.2.3
+  lit: ^3.3.0
 overrides:
   vite: "catalog:"
   vitest: "catalog:"

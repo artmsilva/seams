@@ -25,6 +25,7 @@
     { "path": "./packages/react" },
     { "path": "./packages/plugin-common" },
     { "path": "./packages/next-plugin" },
-    { "path": "./packages/vite-plugin" }
+    { "path": "./packages/vite-plugin" },
+    { "path": "./packages/lit" }
   ]
 }
