@@ -39,6 +39,10 @@ export interface Sheet {
   rules: Record<RuleGroupName, RuleGroup>;
   reset: () => void;
   toString: () => string;
+  /** Get the @layer order declaration CSS. */
+  getLayerOrder: () => string;
+  /** Get all CSS wrapped in @layer blocks, suitable for embedding in HTML. */
+  getLayeredCss: () => string;
 }
 
 /** Whether we're in a browser environment with DOM access. */
@@ -145,12 +149,29 @@ export const createSheet = (): Sheet => {
     return parts.join("");
   };
 
+  const getLayerOrder = (): string => {
+    return `@layer ${ruleGroupNames.map((n) => `${LAYER_PREFIX}.${n}`).join(", ")};`;
+  };
+
+  const getLayeredCss = (): string => {
+    const parts: string[] = [getLayerOrder()];
+    for (const name of ruleGroupNames) {
+      const group = rules[name];
+      if (group && group.rules.length > 0) {
+        parts.push(`@layer ${LAYER_PREFIX}.${name}{${group.rules.join("")}}`);
+      }
+    }
+    return parts.join("");
+  };
+
   reset();
 
   return {
     rules,
     reset,
     toString,
+    getLayerOrder,
+    getLayeredCss,
   };
 };
 

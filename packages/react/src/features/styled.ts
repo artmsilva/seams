@@ -1,6 +1,6 @@
 import React from "react";
 
-import { createCssFunction, createMemo, internal } from "@artmsilva/seams-core";
+import { createCssFunction, createMemo, internal, ruleGroupNames } from "@artmsilva/seams-core";
 import type {
   ComponentConfig,
   CssComponent,
@@ -78,8 +78,32 @@ export interface StyledFn {
 }
 
 /**
+ * Collects all current CSS from the sheet, wrapped in @layer blocks.
+ * Used to co-render <style> tags alongside components for RSC support.
+ *
+ * SECURITY: This CSS is generated deterministically from the library's
+ * own theme config and style objects — not from user-supplied content.
+ * It is safe to embed in <style> tags.
+ */
+const collectSheetCss = (sheet: Sheet): string => {
+  const parts: string[] = [];
+  for (const name of ruleGroupNames) {
+    const group = sheet.rules[name];
+    if (group && group.rules.length > 0) {
+      parts.push(`@layer seams.${name}{${group.rules.join("")}}`);
+    }
+  }
+  return parts.join("");
+};
+
+/**
  * Creates the styled function for React components.
  * Returns a function that creates styled React components with ref forwarding.
+ *
+ * In RSC/SSR contexts, each styled component co-renders a <style> tag with
+ * href and precedence props. React 19 automatically hoists these to <head>,
+ * deduplicates by href, and blocks rendering until styles are processed.
+ * This ensures styles work without client-side JavaScript.
  */
 export const createStyledFunction = ({ config, sheet }: StyledConfig): StyledFn =>
   createStyledFunctionMap(config, () => {
@@ -92,7 +116,6 @@ export const createStyledFunction = ({ config, sheet }: StyledConfig): StyledFn 
     ): StyledComponent<T> => {
       const { displayName, shouldForwardStitchesProp } = componentConfig;
 
-      // Filter args to match what cssFunction expects
       const cssComponent = css(
         ...(args as Array<string | CssComponent | StyleConfig | null | undefined>),
       );
@@ -113,21 +136,51 @@ export const createStyledFunction = ({ config, sheet }: StyledConfig): StyledFn 
 
         forwardProps["ref"] = ref;
 
-        if (deferredInjector) {
-          return React.createElement(
-            React.Fragment,
-            null,
-            React.createElement(Type as React.ElementType, forwardProps),
-            React.createElement(deferredInjector, null),
+        // Collect CSS for co-rendering via React 19 <style href precedence>.
+        // CSS is deterministic output from the library's own style objects
+        // and theme config — not user-supplied content.
+        const cssText = collectSheetCss(sheet);
+        const layerOrderCss = sheet.getLayerOrder();
+
+        const element = React.createElement(Type as React.ElementType, forwardProps);
+
+        // React 19 <style href precedence>: hoists to <head>, deduplicates
+        // by href, blocks rendering until processed. Works in RSC without JS.
+        const children: React.ReactNode[] = [];
+
+        // Layer order declaration — ensures cascade ordering
+        children.push(
+          React.createElement("style", {
+            key: "seams-order",
+            href: "seams-layer-order",
+            precedence: "seams-order",
+            children: layerOrderCss,
+          }),
+        );
+
+        // Component styles wrapped in @layer
+        if (cssText) {
+          children.push(
+            React.createElement("style", {
+              key: `seams-${cssComponent.className}`,
+              href: `seams-${cssComponent.className}`,
+              precedence: "seams",
+              children: cssText,
+            }),
           );
         }
 
-        return React.createElement(Type as React.ElementType, forwardProps);
+        children.push(element);
+
+        if (deferredInjector) {
+          children.push(React.createElement(deferredInjector, { key: "seams-deferred" }));
+        }
+
+        return React.createElement(React.Fragment, null, ...children);
       });
 
       const toString = () => cssComponent.selector;
 
-      // Type-safe property assignment
       const component = styledComponent as unknown as StyledComponent<T>;
       component.className = cssComponent.className;
       component.displayName =
