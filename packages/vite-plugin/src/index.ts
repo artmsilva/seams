@@ -130,7 +130,7 @@ export const seams = (options: SeamsVitePluginOptions = {}): Plugin => {
             ? {
                 version: 3 as const,
                 sources: [id],
-                names: [],
+                names: (result.map as { names?: string[] }).names ?? [],
                 mappings: (result.map as { mappings?: string }).mappings ?? "",
               }
             : undefined,

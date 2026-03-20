@@ -1,0 +1,24 @@
+{
+  "name": "@artmsilva/seams-docs",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vp dev",
+    "build": "vp build",
+    "preview": "vp preview"
+  },
+  "dependencies": {
+    "@artmsilva/seams-react": "workspace:*",
+    "@artmsilva/seams-vite-plugin": "workspace:*",
+    "@vitejs/plugin-react": "^4.5.2",
+    "react": "catalog:",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "catalog:",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  }
+}
