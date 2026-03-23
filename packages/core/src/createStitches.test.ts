@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from "vite-plus/test";
 
 import { createStitches } from "./createStitches.js";
+import { internal } from "./utility/internal.js";
 
 describe("createStitches", () => {
   it("creates a Seams instance", () => {
@@ -278,6 +279,99 @@ describe("createStitches", () => {
       const afterReset = stitches.getCssText();
 
       expect(beforeReset).not.toBe(afterReset);
+    });
+  });
+
+  describe("composition", () => {
+    it("inherits element type and base styles from a composed component", () => {
+      const { css, getCssText } = createStitches();
+
+      const base = css("article", { padding: "10px", color: "red" });
+      const composed = css(base, { fontWeight: "bold" });
+
+      // Inherits the element type from the base
+      expect(composed[internal].type).toBe("article");
+
+      // Gets both base and composed composers
+      expect(composed[internal].composers.size).toBe(2);
+
+      // Renders with both class names
+      const result = composed();
+      expect(result.className).toContain(base.className);
+
+      // CSS contains rules from both components
+      const cssText = getCssText();
+      expect(cssText).toContain("padding:10px");
+      expect(cssText).toContain("font-weight:bold");
+    });
+
+    it("activates variants from both base and composed components", () => {
+      const { css, getCssText } = createStitches();
+
+      const base = css({
+        variants: {
+          color: {
+            red: { color: "red" },
+            blue: { color: "blue" },
+          },
+        },
+      });
+
+      const composed = css(base, {
+        variants: {
+          size: {
+            sm: { fontSize: "12px" },
+            lg: { fontSize: "24px" },
+          },
+        },
+      });
+
+      // Activating both variant axes works
+      const result = composed({ color: "red", size: "lg" });
+      expect(result.className).toBeTruthy();
+
+      const cssText = getCssText();
+      expect(cssText).toContain("color:red");
+      expect(cssText).toContain("font-size:24px");
+    });
+
+    it("supports multi-level composition (A → B → C)", () => {
+      const { css, getCssText } = createStitches();
+
+      const a = css("section", { margin: "4px" });
+      const b = css(a, { padding: "8px" });
+      const c = css(b, { border: "1px solid black" });
+
+      // C inherits the element type from A through B
+      expect(c[internal].type).toBe("section");
+
+      // C has composers from all three levels
+      expect(c[internal].composers.size).toBe(3);
+
+      // Rendering C produces class names from all three
+      const result = c();
+      expect(result.className).toContain(a.className);
+      expect(result.className).toContain(b.className);
+
+      const cssText = getCssText();
+      expect(cssText).toContain("margin:4px");
+      expect(cssText).toContain("padding:8px");
+      expect(cssText).toContain("border:1px solid black");
+    });
+
+    it("wraps a plain component without inheriting composers", () => {
+      const { css } = createStitches();
+
+      // Simulate a plain React component (function, no [internal])
+      const PlainComponent = () => null;
+
+      const wrapped = css(PlainComponent as never, { color: "green" });
+
+      // Uses the plain component as the element type
+      expect(wrapped[internal].type).toBe(PlainComponent);
+
+      // Only has its own composer — no style inheritance from PlainComponent
+      expect(wrapped[internal].composers.size).toBe(1);
     });
   });
 });

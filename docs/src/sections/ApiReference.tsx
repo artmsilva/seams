@@ -17,6 +17,7 @@ const {
   media: { /* breakpoints */ }, // Responsive breakpoints
   utils: { /* utilities */ },   // Custom CSS shorthand utilities
   themeMap: { /* overrides */ }, // Map CSS properties to theme scales
+  atomic: false,                // Enable atomic CSS output mode
 });`;
 
 const styledCode = `const Button = styled("button", {
@@ -167,6 +168,60 @@ import { getCssText } from "./seams.config";
 const cssString = getCssText();
 // => "@layer seams.themed { :root { --colors-primary: ... } } ..."`;
 
+const compositionCode = `// Base component
+const Box = styled("div", {
+  padding: "$2",
+  color: "$text",
+});
+
+// Extended component inherits Box's element type, base styles, and variants
+const Card = styled(Box, {
+  borderRadius: "$md",
+  boxShadow: "$md",
+  backgroundColor: "$bg",
+});
+
+// Multi-level: Card inherits from Box, FeaturedCard from Card
+const FeaturedCard = styled(Card, {
+  border: "2px solid $primary",
+});
+
+// Works with plain React components too (wraps without style inheritance)
+const StyledLink = styled(MyReactRouterLink, {
+  color: "$primary",
+  textDecoration: "none",
+});`;
+
+const atomicCssCode = `// Enable atomic mode in your config
+const { styled, css, getCssText } = createStitches({
+  atomic: true,
+  theme: { /* tokens */ },
+});
+
+// API is identical -- only the CSS output changes
+const Button = styled("button", {
+  backgroundColor: "$primary",
+  color: "white",
+  padding: "$2 $3",
+});
+
+const Badge = styled("span", {
+  color: "white",       // Shares atomic class with Button!
+  padding: "$1 $2",
+  borderRadius: "$pill",
+});`;
+
+const atomicOutputCode = `/* Standard mode: one class per component */
+.c-Button { background-color: var(--colors-primary); color: white; padding: 8px 16px; }
+.c-Badge  { color: white; padding: 4px 8px; border-radius: 9999px; }
+
+/* Atomic mode: one class per declaration, shared globally */
+.s-abc { background-color: var(--colors-primary) }
+.s-def { color: white }                /* shared by Button AND Badge */
+.s-ghi { padding: 8px 16px }
+.s-jkl { padding: 4px 8px }
+.s-mno { border-radius: 9999px }`;
+
 export function ApiReference() {
   return (
     <>
@@ -199,6 +254,15 @@ export function ApiReference() {
           <InlineCode>themeMap</InlineCode> -- Controls which CSS properties map to which theme
           scales. Override defaults when needed (e.g., map <InlineCode>gap</InlineCode> to your{" "}
           <InlineCode>space</InlineCode> scale).
+        </Paragraph>
+        <Paragraph>
+          <InlineCode>atomic</InlineCode> -- When <InlineCode>true</InlineCode>, each CSS
+          property-value pair gets its own globally-deduplicated class. CSS scales logarithmically
+          with component count. See the{" "}
+          <a href="#atomic-css" style={{ color: "inherit" }}>
+            Atomic CSS
+          </a>{" "}
+          section below.
         </Paragraph>
       </Section>
 
@@ -269,6 +333,71 @@ export function ApiReference() {
           critical CSS into your HTML document head, avoiding a flash of unstyled content.
         </Paragraph>
         <CodeBlock label="ssr.ts">{getCssTextCode}</CodeBlock>
+      </Section>
+
+      <Section id="composition" title="Composition">
+        <Paragraph>
+          Pass an existing styled component as the first argument to{" "}
+          <InlineCode>styled()</InlineCode> or <InlineCode>css()</InlineCode> to create an extended
+          version. The new component inherits the base{"'"}s element type, styles, and variant
+          definitions.
+        </Paragraph>
+        <CodeBlock label="composition.tsx">{compositionCode}</CodeBlock>
+
+        <SubHeading>How it works</SubHeading>
+        <Paragraph>
+          Internally, each <InlineCode>css()</InlineCode> call produces a set of <em>composers</em>{" "}
+          (style + variant definitions). When you compose, the base component
+          {"'"}s composers are merged into the new component{"'"}s set. This means styles stack
+          additively -- the new component gets all base styles plus its own. Multi-level chaining (A{" "}
+          {"→"} B {"→"} C) works naturally.
+        </Paragraph>
+        <Paragraph>
+          Plain React components (functions without Seams internals) can also be passed. They become
+          the element type but don{"'"}t contribute any style inheritance, since they have no
+          composers.
+        </Paragraph>
+      </Section>
+
+      <Section id="atomic-css" title="Atomic CSS">
+        <Paragraph>
+          Atomic mode changes how CSS is generated. Instead of one class per component with multiple
+          properties, each property-value pair gets its own hash-based class. Identical declarations
+          across different components share the same class, so CSS deduplicates globally.
+        </Paragraph>
+        <CodeBlock label="seams.config.ts">{atomicCssCode}</CodeBlock>
+
+        <SubHeading>Output comparison</SubHeading>
+        <Paragraph>
+          Here{"'"}s what changes under the hood. The <InlineCode>color: white</InlineCode>{" "}
+          declaration appears once in atomic mode even though two components use it.
+        </Paragraph>
+        <CodeBlock label="output.css">{atomicOutputCode}</CodeBlock>
+
+        <SubHeading>Why atomic?</SubHeading>
+        <Paragraph>
+          In standard mode, CSS grows linearly with the number of components. In atomic mode, it
+          grows logarithmically -- new components reuse existing atomic classes instead of
+          generating new rule blocks. For large design systems this can significantly reduce bundle
+          size.
+        </Paragraph>
+
+        <SubHeading>How specificity works</SubHeading>
+        <Paragraph>
+          When a variant overrides a base property, both atomic classes are in the{" "}
+          <InlineCode>className</InlineCode>. The variant wins because Seams{"'"} existing{" "}
+          <InlineCode>@layer</InlineCode> ordering ensures variant layers (
+          <InlineCode>seams.onevar</InlineCode>) always beat the base layer (
+          <InlineCode>seams.styled</InlineCode>), regardless of class order in the DOM.
+        </Paragraph>
+
+        <SubHeading>Selector targeting</SubHeading>
+        <Paragraph>
+          Each component keeps an identifier class (<InlineCode>c-Button</InlineCode>) with no CSS
+          rules. This preserves the ability to target components in other selectors via{" "}
+          <InlineCode>{"${Button}"}</InlineCode>. The rendered <InlineCode>className</InlineCode>{" "}
+          includes both the identifier and all atomic classes.
+        </Paragraph>
       </Section>
     </>
   );

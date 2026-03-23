@@ -53,6 +53,7 @@ export interface SeamsConfig {
   theme: ThemeConfig;
   themeMap: ThemeMapConfig;
   utils: UtilsConfig;
+  atomic: boolean;
 }
 
 /** @deprecated Use `SeamsConfig` instead */
@@ -67,4 +68,6 @@ export interface CreateStitchesConfig {
   theme?: ThemeConfig;
   themeMap?: ThemeMapConfig;
   utils?: UtilsConfig;
+  /** Enable atomic CSS mode: each property-value pair gets its own class for global dedup. */
+  atomic?: boolean;
 }

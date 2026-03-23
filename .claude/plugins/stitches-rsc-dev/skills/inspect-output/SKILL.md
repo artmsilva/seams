@@ -171,6 +171,60 @@ Styles from `css` prop:
 }
 ```
 
+## Atomic CSS Mode
+
+When `atomic: true` is enabled, the output structure changes:
+
+```css
+/* Standard mode: one class per component */
+@layer seams.styled {
+  .c-Button-abc123 {
+    background-color: var(--colors-primary);
+    padding: var(--space-2);
+    border-radius: 6px;
+  }
+}
+
+/* Atomic mode: one class per property-value pair */
+@layer seams.styled {
+  .s-xyz {
+    background-color: var(--colors-primary);
+  }
+  .s-abc {
+    padding: var(--space-2);
+  }
+  .s-def {
+    border-radius: 6px;
+  }
+}
+```
+
+In atomic mode:
+
+- Component className = `c-Button s-xyz s-abc s-def` (identifier + atomic classes)
+- Identical declarations across components share the same `s-*` class
+- The `c-Button` class has no CSS rules — it's only for selector targeting
+- Variant atomic classes go into `seams.onevar`/`seams.resonevar`/`seams.allvar` layers
+- Pseudo-class atoms include the modifier: `.s-ghi:hover { color: red }`
+- Media query atoms are wrapped: `@media (...) { .s-jkl { font-size: 18px } }`
+
+### Inspecting Atomic Output
+
+```typescript
+import { createStitches } from "@artmsilva/seams-core";
+
+const { css, getCssText } = createStitches({ atomic: true });
+
+const button = css({
+  color: "$primary",
+  "&:hover": { color: "$primaryDark" },
+});
+
+button({ size: "sm" });
+console.log(getCssText());
+// Check for s-* classes and deduplication
+```
+
 ## Debugging Specific Issues
 
 ### Why isn't my style applying?

@@ -101,6 +101,32 @@ const darkTheme = createTheme({
 });
 ```
 
+### Component Composition
+
+Use an existing component as the base for a new one:
+
+```ts
+const base = css("article", { padding: "10px", color: "red" });
+const extended = css(base, { fontWeight: "bold" });
+// extended inherits base's element type, styles, and variants
+```
+
+### Atomic CSS Mode
+
+Enable atomic output where each property-value pair gets its own globally-deduplicated class:
+
+```ts
+const { css, getCssText } = createStitches({ atomic: true });
+
+const a = css({ color: "red", padding: "10px" });
+const b = css({ color: "red", fontSize: "16px" });
+
+a();
+b();
+// Both share the same atomic class for `color: red`
+// CSS contains `color:red` only once
+```
+
 ### `getCssText()`
 
 Get all generated CSS as a string (useful for SSR):

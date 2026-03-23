@@ -128,6 +128,12 @@ export function Hero() {
               Stitches API compatible
             </Text>
           </Row>
+          <Row gap={2}>
+            <FeatureDot color="brand" />
+            <Text size="sm" color="secondary">
+              Atomic CSS mode
+            </Text>
+          </Row>
         </Row>
       </div>
     </HeroSection>

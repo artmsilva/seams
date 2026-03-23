@@ -66,10 +66,11 @@ core <- plugin-common <- next-plugin
 The isomorphic core with no React dependency:
 
 - **`createStitches.ts`** - Factory function returning `css`, `globalCss`, `keyframes`, `createTheme`
-- **`features/css.ts`** - Main `css()` function with variants/compound variants
+- **`features/css.ts`** - Main `css()` function with variants/compound variants and component composition
 - **`convert/`** - CSS conversion utilities:
   - `toHash.ts` - DJB2 hash for deterministic class names
-  - `toCssRules.ts` - Style objects to CSS strings
+  - `toCssRules.ts` - Style objects to CSS strings (standard mode)
+  - `toAtomicRules.ts` - Style objects to atomic CSS (one class per property-value pair)
   - `toTokenizedValue.ts` - `$token` -> `var(--prefix-scale-token)` transform
 - **`sheet.ts`** - CSS rule collection organized by layer groups
 - **`default/defaultThemeMap.ts`** - Maps CSS properties to theme scales
@@ -117,6 +118,27 @@ Both plugins use `processSource` from plugin-common:
 
 `$colors$primary` -> `var(--prefix-colors-primary)`
 
+### Component Composition
+
+Components can be composed by passing one styled component as the base for another:
+
+```tsx
+const Base = styled("div", { padding: "8px", color: "red" });
+const Extended = styled(Base, { fontWeight: "bold" });
+// Extended inherits Base's element type, styles, and variants
+```
+
+The composition mechanism copies the base component's internal composers (style + variant definitions) into the new component. Multi-level chaining (A → B → C) works. Plain React components (without Seams internals) are wrapped as element types without style inheritance.
+
+### Atomic CSS Mode
+
+Enable with `createStitches({ atomic: true })`. Instead of one class per component, each CSS property-value pair gets its own hash-based class (`s-{hash}`). Identical declarations across components share the same class, enabling global CSS deduplication.
+
+- `@layer` ordering handles specificity between base/variant atomic classes
+- The `styled()`/`css()` API is unchanged — only the output format changes
+- Components keep an identifier class (`c-*`) for selector targeting
+- CSS scales logarithmically with component count
+
 ### Dynamic CSS Prop
 
 Dynamic values are converted to CSS variables at build time:
@@ -145,5 +167,6 @@ Tests are in `*.test.ts` files alongside source files. Key test files:
 
 - `packages/core/src/convert/toHash.test.ts`
 - `packages/core/src/convert/toTokenizedValue.test.ts`
-- `packages/core/src/createStitches.test.ts`
+- `packages/core/src/convert/toAtomicRules.test.ts` - Atomic CSS mode tests
+- `packages/core/src/createStitches.test.ts` - Includes composition tests
 - `packages/plugin-common/src/analyzer.test.ts`

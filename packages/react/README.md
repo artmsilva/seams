@@ -99,6 +99,29 @@ Render as a different element:
 </Button>
 ```
 
+### Component Composition
+
+Use an existing styled component as the base for a new one:
+
+```tsx
+const Box = styled("div", { padding: "$2", color: "$text" });
+const Card = styled(Box, {
+  borderRadius: "$md",
+  boxShadow: "$sm",
+});
+// Card inherits Box's element type, base styles, and variants
+```
+
+### Atomic CSS Mode
+
+Enable atomic output for global CSS deduplication across components:
+
+```tsx
+export const { styled, css } = createStitches({ atomic: true });
+// API is identical — only the CSS output format changes
+// Each property-value pair gets a shared atomic class (s-*)
+```
+
 ### RSC and SSR
 
 `@artmsilva/seams-react` works with React Server Components out of the box when paired with `@artmsilva/seams-next-plugin` or `@artmsilva/seams-vite-plugin` for build-time CSS extraction.

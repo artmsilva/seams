@@ -97,6 +97,7 @@ export const createStitches = (initConfig?: CreateStitchesConfig): Seams => {
         ? config.themeMap
         : { ...defaultThemeMap };
     const utils: UtilsConfig = typeof config.utils === "object" && config.utils ? config.utils : {};
+    const atomic: boolean = config.atomic === true;
 
     /** External configuration. */
     const resolvedConfig: SeamsConfig = {
@@ -105,6 +106,7 @@ export const createStitches = (initConfig?: CreateStitchesConfig): Seams => {
       theme,
       themeMap,
       utils,
+      atomic,
     };
 
     /** Internal stylesheet. */

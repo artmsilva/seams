@@ -1,3 +1,4 @@
+import { toAtomicCssRules } from "../convert/toAtomicRules.js";
 import { toCssRules } from "../convert/toCssRules.js";
 import { toHash } from "../convert/toHash.js";
 import { toTailDashed } from "../convert/toTailDashed.js";
@@ -362,6 +363,21 @@ const createRenderer = (
 
     const classSet = new Set(baseClassNames);
 
+    /** Injects atomic rules into a group, deduplicating by class name. */
+    const injectAtomic = (
+      style: CSSObject,
+      groupCache: Set<string>,
+      target: { apply: (cssText: string) => void },
+    ): void => {
+      const atomicClasses = toAtomicCssRules(style, config, (className, cssText) => {
+        if (!groupCache.has(className)) {
+          groupCache.add(className);
+          target.apply(cssText);
+        }
+      });
+      for (const c of atomicClasses) classSet.add(c);
+    };
+
     for (const [
       composerBaseClass,
       composerBaseStyle,
@@ -371,9 +387,13 @@ const createRenderer = (
       if (!sheet.rules.styled.cache.has(composerBaseClass)) {
         sheet.rules.styled.cache.add(composerBaseClass);
 
-        toCssRules(composerBaseStyle, [`.${composerBaseClass}`], [], config, (cssText) => {
-          captureTarget.styled.apply(cssText);
-        });
+        if (config.atomic) {
+          injectAtomic(composerBaseStyle, sheet.rules.styled.cache, captureTarget.styled);
+        } else {
+          toCssRules(composerBaseStyle, [`.${composerBaseClass}`], [], config, (cssText) => {
+            captureTarget.styled.apply(cssText);
+          });
+        }
       }
 
       const singularVariantsToAdd = getTargetVariantsToAdd(
@@ -392,19 +412,23 @@ const createRenderer = (
         if (variantToAdd === undefined) continue;
 
         for (const [vClass, vStyle, isResponsive] of variantToAdd) {
-          const variantClassName = `${composerBaseClass}-${toHash(vStyle)}-${vClass}`;
-
-          classSet.add(variantClassName);
-
           const groupName: RuleGroupName = isResponsive ? "resonevar" : "onevar";
           const groupCache = sheet.rules[groupName].cache;
           const targetCaptureGroup = captureTarget[groupName];
 
-          if (!groupCache.has(variantClassName)) {
-            groupCache.add(variantClassName);
-            toCssRules(vStyle, [`.${variantClassName}`], [], config, (cssText) => {
-              targetCaptureGroup.apply(cssText);
-            });
+          if (config.atomic) {
+            injectAtomic(vStyle, groupCache, targetCaptureGroup);
+          } else {
+            const variantClassName = `${composerBaseClass}-${toHash(vStyle)}-${vClass}`;
+
+            classSet.add(variantClassName);
+
+            if (!groupCache.has(variantClassName)) {
+              groupCache.add(variantClassName);
+              toCssRules(vStyle, [`.${variantClassName}`], [], config, (cssText) => {
+                targetCaptureGroup.apply(cssText);
+              });
+            }
           }
         }
       }
@@ -413,16 +437,20 @@ const createRenderer = (
         if (variantToAdd === undefined) continue;
 
         for (const [vClass, vStyle] of variantToAdd) {
-          const variantClassName = `${composerBaseClass}-${toHash(vStyle)}-${vClass}`;
+          if (config.atomic) {
+            injectAtomic(vStyle, sheet.rules.allvar.cache, captureTarget.allvar);
+          } else {
+            const variantClassName = `${composerBaseClass}-${toHash(vStyle)}-${vClass}`;
 
-          classSet.add(variantClassName);
+            classSet.add(variantClassName);
 
-          if (!sheet.rules.allvar.cache.has(variantClassName)) {
-            sheet.rules.allvar.cache.add(variantClassName);
+            if (!sheet.rules.allvar.cache.has(variantClassName)) {
+              sheet.rules.allvar.cache.add(variantClassName);
 
-            toCssRules(vStyle, [`.${variantClassName}`], [], config, (cssText) => {
-              captureTarget.allvar.apply(cssText);
-            });
+              toCssRules(vStyle, [`.${variantClassName}`], [], config, (cssText) => {
+                captureTarget.allvar.apply(cssText);
+              });
+            }
           }
         }
       }
@@ -435,16 +463,20 @@ const createRenderer = (
         delete forwardProps["css"];
       }
 
-      const iClass = `${baseClassName}-i${toHash(css)}-css`;
+      if (config.atomic) {
+        injectAtomic(css, sheet.rules.inline.cache, captureTarget.inline);
+      } else {
+        const iClass = `${baseClassName}-i${toHash(css)}-css`;
 
-      classSet.add(iClass);
+        classSet.add(iClass);
 
-      if (!sheet.rules.inline.cache.has(iClass)) {
-        sheet.rules.inline.cache.add(iClass);
+        if (!sheet.rules.inline.cache.has(iClass)) {
+          sheet.rules.inline.cache.add(iClass);
 
-        toCssRules(css, [`.${iClass}`], [], config, (cssText) => {
-          captureTarget.inline.apply(cssText);
-        });
+          toCssRules(css, [`.${iClass}`], [], config, (cssText) => {
+            captureTarget.inline.apply(cssText);
+          });
+        }
       }
     }
 
@@ -520,12 +552,8 @@ export const createCssFunction = (config: StitchesConfig, sheet: Sheet): CssFn =
         // Skip any void argument
         if (arg == null) continue;
 
-        // Conditionally extend the component
-        if (
-          typeof arg === "object" &&
-          internal in arg &&
-          (arg as unknown as { [internal]: InternalsData })[internal]
-        ) {
+        // Conditionally extend the component (CssComponents are functions with [internal])
+        if ((arg as unknown as { [internal]?: InternalsData })[internal]) {
           const argInternal = (arg as unknown as { [internal]: InternalsData })[internal];
 
           if (internals.type == null) {
@@ -537,7 +565,11 @@ export const createCssFunction = (config: StitchesConfig, sheet: Sheet): CssFn =
           }
         }
         // Otherwise, conditionally define the component type
-        else if (typeof arg !== "object" || (arg as { $$typeof?: unknown }).$$typeof) {
+        else if (
+          typeof arg === "object"
+            ? (arg as { $$typeof?: unknown }).$$typeof
+            : arg.constructor !== Object
+        ) {
           if (internals.type == null) {
             internals.type = arg;
           }

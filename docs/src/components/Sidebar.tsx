@@ -54,6 +54,8 @@ const navSections: NavSection[] = [
       { label: "keyframes", href: "#api-keyframes" },
       { label: "createTheme", href: "#api-create-theme" },
       { label: "getCssText", href: "#api-get-css-text" },
+      { label: "Composition", href: "#composition" },
+      { label: "Atomic CSS", href: "#atomic-css" },
     ],
   },
   {
